@@ -20,7 +20,8 @@ class User extends Resource
             'email' => $this->email,
             'age' => $this->age,
             'department_id' => $this->department_id,
-            'department' => $this->department->name,
+            'department' => 'Test'
+            //'department' => $this->department->name,
         ];
     }
 }

@@ -18,7 +18,11 @@ class User extends Resource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'age' => 99
+            'age' => 'TODO',
+            'test_var1' => 'Hello',
+            'test_var2' => '123',
+            'test_var3' => 'World!',
+            'variavel_comum' => 9999
         ];
     }
 }

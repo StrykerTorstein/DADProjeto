@@ -11,7 +11,7 @@ define('CLIENT_SECRET',env('PASSPORT_SECRET'));
 
 class LoginController extends Controller
 {
-    
+
     /*
     |--------------------------------------------------------------------------
     | Login Controller

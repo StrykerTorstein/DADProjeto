@@ -37,6 +37,7 @@
         value
       />
     </div>
+    <!--
     <div class="form-group">
       <label for="department_id">Department:</label>
       <select
@@ -52,6 +53,7 @@
         >{{ department.name }}</option>
       </select>
     </div>
+    -->
 
     <div class="form-group">
       <a class="btn btn-primary" v-on:click.prevent="saveUser()">Save</a>
@@ -65,7 +67,7 @@ export default {
   props:['currentUser'],
   data: () => {
     return {
-      departments:[]
+      //departments:[]
     };
   },
   methods: {
@@ -77,7 +79,7 @@ export default {
     }
   },mounted(){
     //Para mostrar que é possivel aceder a variaveis no root (vue.js file)
-    this.departments = this.$root.departments;
+    //this.departments = this.$root.departments;
   }
 };
 </script>

@@ -11,7 +11,6 @@ require('./bootstrap');
 window.Vue = require('vue');
 
 import Users from './components/users';
-import Departments from './components/departments'
 import TicTacToe from './components/game'
 import VueRouter from 'vue-router';
 
@@ -21,7 +20,6 @@ Vue.use(VueRouter);
 
 const routes = [
     {path:'/',component:Users},
-    {path:'/departments',component:Departments},
     {path: '/game',component:TicTacToe}
 ]
 
@@ -33,7 +31,7 @@ const app = new Vue({
     el: '#app',
     router,
     data: {
-        departments: [],
+        //departments: [],
         player1: undefined,
         player2: undefined
     },
@@ -41,8 +39,10 @@ const app = new Vue({
         
     },
     mounted() {
+        /*
         axios.get("api/departments").then(response => {
           this.departments = response.data.data;
         });
+        */
     }
 });

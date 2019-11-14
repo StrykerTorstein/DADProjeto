@@ -35655,8 +35655,8 @@ var app = new Vue({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/torstein/Documents/Engenharia_Informatica/DAD/Vue/DADProjeto/resources/js/vue.js */"./resources/js/vue.js");
-module.exports = __webpack_require__(/*! /home/torstein/Documents/Engenharia_Informatica/DAD/Vue/DADProjeto/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Users\joao_\dad\projeto\DADProjeto\resources\js\vue.js */"./resources/js/vue.js");
+module.exports = __webpack_require__(/*! C:\Users\joao_\dad\projeto\DADProjeto\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

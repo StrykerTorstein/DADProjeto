@@ -31,7 +31,7 @@ import UserEdit from './userEdit';
 export default {
   data: () => {
     return {
-      title: "List Users",
+      title: "Virtual Wallet",
       editingUser: false,
       showSuccess: false,
       showFailure: false,

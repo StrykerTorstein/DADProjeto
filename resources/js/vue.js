@@ -33,7 +33,7 @@ Vue.use(VueRouter);
 const routes = [
     {path:'/',redirect:'/landingPage'},
     {path:'/landingPage',component:LandingPage},
-    {path:'/user', component:UserPage},
+    {path:'/userPage', component:UserPage},
     {path:'/users',component:Users},
     {path:'/game',component:TicTacToe}
 ]

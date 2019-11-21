@@ -64,12 +64,11 @@ export default {
         var token = response.data.access_token;
         this.$store.commit("setToken",token);
         console.log("User logged in!");
-        this.$router.push('/userPage');
         axios.get("api/user").then(response => {
-            //console.log(response.data);
-            this.$store.commit("setUser",response.data);
+          this.$store.commit("setUser",response.data);
+          //this.$router.push("/userPage");
+          this.$router.push({ path: '/userPage' });
         });
-
       }).catch(error => { console.log ("Cannot login!"); })
     },
     getNumberOfWallets: function() {

@@ -2036,25 +2036,19 @@ __webpack_require__.r(__webpack_exports__);
       this.user.email = email;
       this.user.password = password;
       this.user.user = this.$store.state.user;
-      /*
-      axios.get("api/users/email/"+this.user.email).then(response => {
-        this.user.email = email;
-        this.user.password = password;
-        this.user.user = response.data;
-      });
-      */
-
       axios.post("api/login", this.user).then(function (response) {
         var token = response.data.access_token;
 
         _this.$store.commit("setToken", token);
 
         console.log("User logged in!");
-
-        _this.$router.push('/userPage');
-
         axios.get("api/user").then(function (response) {
-          console.log(response.data); //this.$store.commit("setUser",user);
+          _this.$store.commit("setUser", response.data); //this.$router.push("/userPage");
+
+
+          _this.$router.push({
+            path: '/userPage'
+          });
         });
       })["catch"](function (error) {
         console.log("Cannot login!");
@@ -2239,12 +2233,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return {};
+    return {
+      title: "Welcome",
+      user: null
+    };
   },
-  methods: {},
-  mounted: function mounted() {}
+  methods: {
+    debug: function debug() {
+      console.log(this.$data.user);
+    }
+  },
+  mounted: function mounted() {
+    this.$store.commit("loadTokenAndUserFromSession");
+    this.$data.user = this.$store.state.user;
+  }
 });
 
 /***/ }),
@@ -21045,16 +21051,27 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", [
+    _c("div", { staticClass: "jumbotron" }, [
+      _c("h1", [_vm._v(_vm._s(_vm.title))])
+    ]),
+    _vm._v(" "),
+    _c(
+      "a",
+      {
+        staticClass: "btn btn-primary",
+        on: {
+          click: function($event) {
+            $event.preventDefault()
+            return _vm.debug()
+          }
+        }
+      },
+      [_vm._v("Debug")]
+    )
+  ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [_c("div", { staticClass: "Welcome USERNAME" })])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -75049,15 +75066,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!**********************************************!*\
   !*** ./resources/js/components/userPage.vue ***!
   \**********************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _userPage_vue_vue_type_template_id_15d89945___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./userPage.vue?vue&type=template&id=15d89945& */ "./resources/js/components/userPage.vue?vue&type=template&id=15d89945&");
 /* harmony import */ var _userPage_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./userPage.vue?vue&type=script&lang=js& */ "./resources/js/components/userPage.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _userPage_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _userPage_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -75087,7 +75103,7 @@ component.options.__file = "resources/js/components/userPage.vue"
 /*!***********************************************************************!*\
   !*** ./resources/js/components/userPage.vue?vue&type=script&lang=js& ***!
   \***********************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -75212,10 +75228,12 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
       sessionStorage.removeItem('user');
       sessionStorage.removeItem('token');
       axios.defaults.headers.common.Authorization = undefined;
+      state.isLogged = false;
     },
     clearUser: function clearUser(state) {
       state.user = null;
       sessionStorage.removeItem('user');
+      state.isLogged = false;
     },
     clearToken: function clearToken(state) {
       state.token = "";
@@ -75307,7 +75325,7 @@ var routes = [{
   path: '/landingPage',
   component: _components_landingPage__WEBPACK_IMPORTED_MODULE_8__["default"]
 }, {
-  path: '/user',
+  path: '/userPage',
   component: _components_userPage__WEBPACK_IMPORTED_MODULE_9__["default"]
 }, {
   path: '/users',

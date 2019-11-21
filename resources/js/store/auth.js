@@ -16,11 +16,12 @@ export default new Vuex.Store({
             sessionStorage.removeItem('user');
             sessionStorage.removeItem('token');
             axios.defaults.headers.common.Authorization = undefined;
+            state.isLogged=false;
         },
         clearUser: (state) => {
             state.user = null;
             sessionStorage.removeItem('user');
-           
+            state.isLogged=false;
         },
         clearToken: (state) => {
             state.token = "";

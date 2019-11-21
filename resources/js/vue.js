@@ -9,17 +9,23 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+import Vuetify from "vuetify";
+
+Vue.use(Vuetify)
+import "vuetify/dist/vuetify.min.css";
+
 
 import Users from './components/users';
 import TicTacToe from './components/game'
 import VueRouter from 'vue-router';
+import Wallet from './components/paginaInicial';
 
 Vue.use(VueRouter);
 //Vue Router makes the line below deprecated
 //Vue.component('users',Users);
 
 const routes = [
-    {path:'/',component:Users},
+    {path:'/',component:Wallet},
     {path: '/game',component:TicTacToe}
 ]
 

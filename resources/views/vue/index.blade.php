@@ -12,4 +12,5 @@
 
 @section('pagescript')
     <script src="js/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
 @stop  

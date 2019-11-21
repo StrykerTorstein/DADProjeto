@@ -21,7 +21,6 @@ class WalletController extends Controller
             'total' => $nr_wallet
         ], 200);
     }
-    //hello
 
     /**
      * Store a newly created resource in storage.

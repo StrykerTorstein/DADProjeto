@@ -18,7 +18,7 @@ import "vuetify/dist/vuetify.min.css";
 import Users from './components/users';
 import TicTacToe from './components/game'
 import VueRouter from 'vue-router';
-import Wallet from './components/paginaInicial';
+import Wallet from './components/welcomePage';
 
 Vue.use(VueRouter);
 //Vue Router makes the line below deprecated

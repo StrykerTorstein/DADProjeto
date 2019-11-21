@@ -24,6 +24,8 @@ Route::get('users/{id}', 'UserControllerAPI@show');
 Route::post('users', 'UserControllerAPI@store');
 Route::put('users/{id}', 'UserControllerAPI@update');
 Route::delete('users/{id}', 'UserControllerAPI@destroy');
+//get porque vou buscar um número
+Route::get('wallets', 'WalletController@index');
 
 /*
 Caso prefiram usar Resource Routes para o user, podem implementar antes as rotas:

@@ -11,6 +11,8 @@
     @yield('extrastyles')
     <!-- Latest compiled and minified CSS & JS -->
     <link rel="stylesheet" href="{{ URL::asset('css/app.css') }}">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons' rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
 </head>
 
 <body>

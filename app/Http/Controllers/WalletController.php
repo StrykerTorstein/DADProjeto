@@ -12,7 +12,7 @@ class WalletController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function count()
     {
         //Variável com o numero de wallets
         $nr_wallet = Wallet::count();

@@ -13,4 +13,5 @@
 @section('pagescript')
     <script src="js/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+    <script src="https://unpkg.com/vuex@3.1.2/dist/vuex.js"></script>
 @stop  

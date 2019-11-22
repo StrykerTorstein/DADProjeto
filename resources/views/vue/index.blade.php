@@ -4,7 +4,7 @@
 
 @section('content')
     <!--<users></users>-->
-    <router-link to="/">Login</router-link>
+    <router-link to="/">Welcome</router-link>
     <!--<router-link to="/departments">Departments</router-link>-->
     <router-link to="/game">Tic Tac Toe</router-link>
     <router-view></router-view>

@@ -2,9 +2,9 @@
   <div>
     <div class="jumbotron">
       <h1>{{ title }}</h1>
-      <h1>{{number}}</h1>
     </div>
-    <div class="jumbotron"><div class="form-group">
+    <div class="jumbotron">
+      <div class="form-group">
       <h2>Login Credentials</h2>
       <label for="inputEmail">Email</label>
       <input
@@ -39,7 +39,7 @@
 export default {
   data: () => {
     return {
-      title: "Virtual Wallet",
+      title: "Login Menu",
       loginEmail: "user1@mail.pt",
       loginPassword: "123",
       user: {
@@ -70,18 +70,12 @@ export default {
         this.warningMessage = "Login failed! Invalid credentials.";
       }  
     )},
-    getNumberOfWallets: function() {
-      axios.get("api/wallets/count").then(response => {
-        this.number = response.data.total;
-      });
-    },
     gotoRegisterPage(){
       this.$router.push({ path: '/register' });
     }
   },
-
   mounted() {
-    this.getNumberOfWallets();
+    
   },
 
 };

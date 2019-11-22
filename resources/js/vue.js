@@ -21,6 +21,7 @@ Vue.use(Vuetify)
 import "vuetify/dist/vuetify.min.css";
 
 import VueRouter from 'vue-router';
+import Welcome from './components/welcome'
 import Users from './components/users';
 import TicTacToe from './components/game';
 import Login from './components/login';
@@ -32,7 +33,8 @@ Vue.use(VueRouter);
 //Vue.component('users',Users);
 
 const routes = [
-    {path:'/',redirect:'/login'},
+    {path:'/',redirect:'/welcome'},
+    {path:'/welcome',component:Welcome},
     {path:'/login',component:Login},
     {path:'/register',component:Register},
     {path:'/dashboard', component:Dashboard},

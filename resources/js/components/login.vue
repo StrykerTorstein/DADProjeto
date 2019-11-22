@@ -63,7 +63,7 @@ export default {
         console.log("User logged in!");
         axios.get("api/user").then(response => {
           this.$store.commit("setUser",response.data);
-          this.$router.push({ path: '/userPage' });
+          this.$router.push({ path: '/dashboard' });
         });
       }).catch(error => { 
         this.showWarning = true;

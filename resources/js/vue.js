@@ -24,7 +24,7 @@ import VueRouter from 'vue-router';
 import Users from './components/users';
 import TicTacToe from './components/game';
 import Login from './components/login';
-import UserPage from './components/userPage';
+import Dashboard from './components/dashboard';
 import Register from './components/register';
 
 Vue.use(VueRouter);
@@ -35,7 +35,7 @@ const routes = [
     {path:'/',redirect:'/login'},
     {path:'/login',component:Login},
     {path:'/register',component:Register},
-    {path:'/userPage', component:UserPage},
+    {path:'/dashboard', component:Dashboard},
     {path:'/users',component:Users},
     {path:'/game',component:TicTacToe}
 ]

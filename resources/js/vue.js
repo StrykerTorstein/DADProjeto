@@ -20,19 +20,21 @@ import store from './store/auth';
 Vue.use(Vuetify)
 import "vuetify/dist/vuetify.min.css";
 
-import Users from './components/users';
-import TicTacToe from './components/game'
 import VueRouter from 'vue-router';
-import LandingPage from './components/landingPage';
+import Users from './components/users';
+import TicTacToe from './components/game';
+import Login from './components/login';
 import UserPage from './components/userPage';
+import Register from './components/register';
 
 Vue.use(VueRouter);
 //Vue Router makes the line below deprecated
 //Vue.component('users',Users);
 
 const routes = [
-    {path:'/',redirect:'/landingPage'},
-    {path:'/landingPage',component:LandingPage},
+    {path:'/',redirect:'/login'},
+    {path:'/login',component:Login},
+    {path:'/register',component:Register},
     {path:'/userPage', component:UserPage},
     {path:'/users',component:Users},
     {path:'/game',component:TicTacToe}

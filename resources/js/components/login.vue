@@ -24,16 +24,11 @@
         id="inputPassword"
       />
       <a class="btn btn-primary" v-on:click.prevent="login(loginEmail,loginPassword)">Login</a>
-<!--
-      <label for="MyStoreTest">Store:</label>
-      <input
-        type="text"
-        class="form-control"
-        v-model="storeTestInput"
-        name="Test"
-        id="MyStoreTest"
-        value = storetest
-      /> -->
+      <a class="btn btn-secondary" v-on:click.prevent="gotoRegisterPage()">Register</a>
+    </div>
+    <div class="alert alert-warning" v-if="showWarning">
+      <button type="button" class="close-btn" v-on:click="showWarning=false">&times;</button>
+      <strong>{{ warningMessage }}</strong>
     </div>
     </div>
   </div>
@@ -52,7 +47,9 @@ export default {
         password: "",
         user: undefined
       },
-      number: 0
+      number: 0,
+      showWarning: false,
+      warningMessage : ""
     };
   },
   methods: {
@@ -66,15 +63,20 @@ export default {
         console.log("User logged in!");
         axios.get("api/user").then(response => {
           this.$store.commit("setUser",response.data);
-          //this.$router.push("/userPage");
           this.$router.push({ path: '/userPage' });
         });
-      }).catch(error => { console.log ("Cannot login!"); })
-    },
+      }).catch(error => { 
+        this.showWarning = true;
+        this.warningMessage = "Login failed! Invalid credentials.";
+      }  
+    )},
     getNumberOfWallets: function() {
       axios.get("api/wallets/count").then(response => {
         this.number = response.data.total;
       });
+    },
+    gotoRegisterPage(){
+      this.$router.push({ path: '/register' });
     }
   },
 

@@ -2126,13 +2126,167 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      title: "Register"
+      title: "Register",
+      showWarning: false,
+      warningMessage: "",
+      registerName: "",
+      registerEmail: "",
+      registerPassword: "",
+      registerNif: 0,
+      user: {
+        name: "",
+        email: "",
+        password: "",
+        nif: null
+      }
     };
   },
-  methods: {},
+  methods: {
+    tryRegister: function tryRegister() {
+      var _this = this;
+
+      //TODO: Create wallet on register and assign it to user (?)
+      this.showWarning = false;
+      this.warningMessage = "";
+      this.user.name = this.registerName;
+      this.user.email = this.registerEmail;
+      this.user.password = this.registerPassword; //Bcrypt this (HOW?)
+
+      this.user.nif = this.registerNif;
+      var emailValid = this.validEmail(this.user.email);
+      var nameValid = this.validName(this.user.name);
+      var passwordValid = this.validPassword(this.user.password);
+      var nifValid = this.validNif(this.user.nif);
+      axios.get("api/users/emailavailable", {
+        params: {
+          email: this.user.email
+        }
+      }).then(function (response) {
+        if (response.data === true) {
+          if (!nameValid) {
+            _this.showWarning = true;
+            _this.warningMessage += "Name can only be spaces and letters,";
+          }
+
+          if (!emailValid) {
+            _this.showWarning = true;
+            _this.warningMessage += "Email invalid,";
+          }
+
+          if (!passwordValid) {
+            _this.showWarning = true;
+            _this.warningMessage += "Password must have 3 or more characters,";
+          }
+
+          if (!nifValid) {
+            _this.warningMessage += "Nif must be a 9 digit number,";
+          }
+
+          if (nameValid && emailValid && passwordValid && nifValid) {
+            axios.post("api/users", {
+              name: _this.user.name,
+              email: _this.user.email,
+              password: _this.user.password,
+              nif: _this.user.nif
+            }).then(function () {
+              _this.$router.push({
+                path: '/login'
+              });
+            })["catch"](function (error) {
+              console.log(error);
+            });
+          }
+        } else {
+          _this.showWarning = true;
+          _this.warningMessage += "Email already in use,";
+        }
+      });
+    },
+    validName: function validName(name) {
+      if (!name) {
+        return false;
+      }
+
+      var re = /^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/;
+      return re.test(name) && name.length >= 3;
+    },
+    validEmail: function validEmail(email) {
+      if (!email) {
+        return false;
+      }
+
+      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    },
+    validPassword: function validPassword(password) {
+      if (!password) {
+        return false;
+      }
+
+      return password.length >= 3;
+    },
+    validNif: function validNif(nif) {
+      if (!nif) {
+        return false;
+      }
+
+      return nif >= 100000000 && nif <= 999999999;
+    }
+  },
   mounted: function mounted() {}
 });
 
@@ -20918,7 +21072,155 @@ var render = function() {
   return _c("div", [
     _c("div", { staticClass: "jumbotron" }, [
       _c("h1", [_vm._v(_vm._s(_vm.title))])
-    ])
+    ]),
+    _vm._v(" "),
+    _c("div", [
+      _c("label", { attrs: { for: "inputName" } }, [_vm._v("Name")]),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.registerName,
+            expression: "registerName"
+          }
+        ],
+        staticClass: "form-control",
+        attrs: {
+          type: "text",
+          name: "name",
+          id: "inputName",
+          placeholder: "Firstname Lastname"
+        },
+        domProps: { value: _vm.registerName },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.registerName = $event.target.value
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("label", { attrs: { for: "inputEmail" } }, [_vm._v("Email")]),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.registerEmail,
+            expression: "registerEmail"
+          }
+        ],
+        staticClass: "form-control",
+        attrs: {
+          type: "email",
+          name: "email",
+          id: "inputEmail",
+          placeholder: "user1@mail.pt"
+        },
+        domProps: { value: _vm.registerEmail },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.registerEmail = $event.target.value
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("label", { attrs: { for: "inputPassword" } }, [_vm._v("Password")]),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.registerPassword,
+            expression: "registerPassword"
+          }
+        ],
+        staticClass: "form-control",
+        attrs: { type: "password", name: "password", id: "inputPassword" },
+        domProps: { value: _vm.registerPassword },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.registerPassword = $event.target.value
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("label", { attrs: { for: "inputNif" } }, [_vm._v("NIF")]),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.registerNif,
+            expression: "registerNif"
+          }
+        ],
+        staticClass: "form-control",
+        attrs: {
+          type: "number",
+          name: "nif",
+          id: "inputNif",
+          min: "100000000",
+          max: "999999999"
+        },
+        domProps: { value: _vm.registerNif },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.registerNif = $event.target.value
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-primary",
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              return _vm.tryRegister()
+            }
+          }
+        },
+        [_vm._v("Register")]
+      )
+    ]),
+    _vm._v(" "),
+    _vm.showWarning
+      ? _c("div", { staticClass: "alert alert-warning" }, [
+          _c(
+            "button",
+            {
+              staticClass: "close-btn",
+              attrs: { type: "button" },
+              on: {
+                click: function($event) {
+                  _vm.showWarning = false
+                }
+              }
+            },
+            [_vm._v("×")]
+          ),
+          _vm._v(" "),
+          _c("strong", [_vm._v(_vm._s(_vm.warningMessage))])
+        ])
+      : _vm._e()
   ])
 }
 var staticRenderFns = []

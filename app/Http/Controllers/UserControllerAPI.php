@@ -40,12 +40,13 @@ class UserControllerAPI extends Controller
         $request->validate([
                 'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
                 'email' => 'required|email|unique:users,email',
-                'age' => 'integer|between:18,75',
-                'password' => 'min:3'
+                'password' => 'min:3',
+                'nif' => 'min:9'
             ]);
         $user = new User();
         $user->fill($request->all());
-        $user->password = Hash::make($user->password);
+        //$user->password = Hash::make($user->password); //cannot use this: 'password' is not in the 'fillable'
+        $user->password = bcrypt($request->password);
         $user->save();
         return response()->json(new UserResource($user), 201);
     }
@@ -55,7 +56,7 @@ class UserControllerAPI extends Controller
         $request->validate([
                 'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
                 'email' => 'required|email|unique:users,email,'.$id,
-                'age' => 'integer|between:18,75'
+                'nif' => 'min:9'
             ]);
         $user = User::findOrFail($id);
         $user->update($request->all());
@@ -71,10 +72,17 @@ class UserControllerAPI extends Controller
     public function emailAvailable(Request $request)
     {
         $totalEmail = 1;
+        /*
         if ($request->has('email') && $request->has('id')) {
             $totalEmail = DB::table('users')->where('email', '=', $request->email)->where('id', '<>', $request->id)->count();
         } else if ($request->has('email')) {
             $totalEmail = DB::table('users')->where('email', '=', $request->email)->count();
+        }
+        */
+        if ($request->has('email') && $request->has('id')) {
+            $totalEmail = User::where('email', '=', $request->email)->where('id', '<>', $request->id)->count();
+        } else  if ($request->has('email')) {
+            $totalEmail = User::where('email', '=', $request->email)->count();
         }
         return response()->json($totalEmail == 0);
     }

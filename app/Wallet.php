@@ -10,4 +10,9 @@ class Wallet extends Model
         'email',
         'balance',
     ];
+
+    public function owner()
+    {
+        return $this->hasOne('App\User', 'email', 'email')->withTrashed();
+    }
 }

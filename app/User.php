@@ -16,11 +16,13 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = [
+    protected $fillable = [ 
         'name',
         'email',
-        'age',
-        'department_id',
+        'type',
+        'active',
+        'photo',
+        'nif'
     ];
 
     /**
@@ -32,9 +34,33 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function department()
+    public static function userTypeToStr($type)
     {
-        return $this->belongsTo(Department::class);
+        switch ($type) {
+            case 'u':
+                return 'User';
+            case 'o':
+                return 'Operator';
+            case 'a':
+                return 'Administrator';
+        }
+        return 'Unknown';
+    }
+
+    public function isUser(){
+        return $this->type === "u";
+    }
+    
+    public function isOperator(){
+        return $this->type === "o";
+    }
+
+    public function isAdministrator(){
+        return $this->type === "a";
+    }
+
+    public function isActive(){
+        return $this->active === 1;
     }
 }
 

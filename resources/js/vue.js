@@ -8,25 +8,36 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue');
+import Vue from 'vue'
 import Vuetify from "vuetify";
+import Vuex from 'vuex'
+
+window.Vue = require('vue');
+
+Vue.use(Vuex)
+import store from './store/auth';
 
 Vue.use(Vuetify)
 import "vuetify/dist/vuetify.min.css";
 
-
-import Users from './components/users';
-import TicTacToe from './components/game'
 import VueRouter from 'vue-router';
-import Wallet from './components/welcomePage';
+import Users from './components/users';
+import TicTacToe from './components/game';
+import Login from './components/login';
+import Dashboard from './components/dashboard';
+import Register from './components/register';
 
 Vue.use(VueRouter);
 //Vue Router makes the line below deprecated
 //Vue.component('users',Users);
 
 const routes = [
-    {path:'/',component:Wallet},
-    {path: '/game',component:TicTacToe}
+    {path:'/',redirect:'/login'},
+    {path:'/login',component:Login},
+    {path:'/register',component:Register},
+    {path:'/dashboard', component:Dashboard},
+    {path:'/users',component:Users},
+    {path:'/game',component:TicTacToe}
 ]
 
 const router = new VueRouter({
@@ -35,6 +46,7 @@ const router = new VueRouter({
 
 const app = new Vue({
     el: '#app',
+    store,
     router,
     data: {
         //departments: [],

@@ -1847,6 +1847,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1857,6 +1866,9 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     debug: function debug() {
       console.log(this.$data.user);
+    },
+    getPhoto: function getPhoto() {
+      return "storage/fotos/" + this.$data.user.photo;
     }
   },
   mounted: function mounted() {
@@ -2168,6 +2180,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2178,11 +2204,14 @@ __webpack_require__.r(__webpack_exports__);
       registerEmail: "",
       registerPassword: "",
       registerNif: 0,
+      registerPhotoImage: null,
+      registerPhotoFile: null,
       user: {
         name: "",
         email: "",
         password: "",
-        nif: null
+        nif: null,
+        photo: null
       }
     };
   },
@@ -2198,6 +2227,7 @@ __webpack_require__.r(__webpack_exports__);
       this.user.password = this.registerPassword; //Bcrypt this (HOW?)
 
       this.user.nif = this.registerNif;
+      this.user.photo = this.registerPhotoFile;
       var emailValid = this.validEmail(this.user.email);
       var nameValid = this.validName(this.user.name);
       var passwordValid = this.validPassword(this.user.password);
@@ -2228,18 +2258,34 @@ __webpack_require__.r(__webpack_exports__);
           }
 
           if (nameValid && emailValid && passwordValid && nifValid) {
-            axios.post("api/users", {
-              name: _this.user.name,
-              email: _this.user.email,
-              password: _this.user.password,
-              nif: _this.user.nif
-            }).then(function () {
+            var formData = new FormData();
+            formData.append('photo', _this.registerPhotoFile);
+            formData.set('name', _this.user.name);
+            formData.set('email', _this.user.email);
+            formData.set('password', _this.user.password);
+            formData.set('nif', _this.user.nif);
+            axios.post("api/users", formData).then(function () {
               _this.$router.push({
                 path: '/login'
               });
             })["catch"](function (error) {
               console.log(error);
             });
+            /*
+            let formData = new FormData();
+            formData.append('photoFile', this.registerPhotoFile);
+            axios.post("api/users",formData,{
+                name: this.user.name,
+                email: this.user.email,
+                password : this.user.password,
+                nif : this.user.nif,
+                photo: this.user.photo
+            }).then(() => {
+                this.$router.push({ path: '/login' });
+            }).catch(function (error) {
+                console.log(error);
+            });
+            */
           }
         } else {
           _this.showWarning = true;
@@ -2276,6 +2322,28 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return nif >= 100000000 && nif <= 999999999;
+    },
+    previewImage: function previewImage(event) {
+      var _this2 = this;
+
+      // Reference to the DOM input element
+      var input = event.target; // Ensure that you have a file before attempting to read it
+
+      if (input.files && input.files[0]) {
+        // create a new FileReader to read this image and convert to base64 format
+        var reader = new FileReader(); // Define a callback function to run, when FileReader finishes its job
+
+        reader.onload = function (e) {
+          // Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
+          // Read image as base64 and set to imageData
+          console.log(e.target.result);
+          _this2.registerPhotoImage = e.target.result;
+        }; // Start the reader job - read file as a data url (base64 format)
+
+
+        reader.readAsDataURL(input.files[0]);
+        this.registerPhotoFile = input.files[0];
+      }
     }
   },
   mounted: function mounted() {}
@@ -20844,6 +20912,18 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c(
+      "div",
+      [
+        _vm.user
+          ? _c("v-img", {
+              attrs: { height: "256px", width: "256px", src: _vm.getPhoto() }
+            })
+          : _vm._e()
+      ],
+      1
+    ),
+    _vm._v(" "),
+    _c(
       "a",
       {
         staticClass: "btn btn-primary",
@@ -21230,6 +21310,28 @@ var render = function() {
           }
         }
       }),
+      _vm._v(" "),
+      _c("div", { staticClass: "file-upload-form" }, [
+        _vm._v("\n          Upload an image file:\n          "),
+        _c("input", {
+          attrs: { type: "file", accept: "image/*" },
+          on: { change: _vm.previewImage }
+        }),
+        _vm._v(" "),
+        _c("div", [
+          _vm.registerPhotoImage
+            ? _c("img", {
+                staticClass: "preview",
+                attrs: {
+                  src: _vm.registerPhotoImage,
+                  height: "256px",
+                  width: "256px",
+                  accept: "image/*"
+                }
+              })
+            : _vm._e()
+        ])
+      ]),
       _vm._v(" "),
       _c(
         "a",

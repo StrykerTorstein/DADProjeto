@@ -3,6 +3,15 @@
     <div class="jumbotron">
       <h1>{{ title }}</h1>
     </div>
+      <div>
+        <v-img
+          v-if="user"
+          height="256px"
+          width="256px"
+          :src="getPhoto()"
+        >
+        </v-img>
+      </div>
     <a class="btn btn-primary" v-on:click.prevent="debug()">Debug</a>
   </div>
 </template>
@@ -18,7 +27,10 @@ export default {
     },
     methods: {
         debug: function(){
-            console.log(this.$data.user);
+          console.log(this.$data.user);
+        },
+        getPhoto(){
+          return "storage/fotos/" + this.$data.user.photo;
         }
     },
     mounted() {

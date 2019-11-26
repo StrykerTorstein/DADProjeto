@@ -14,10 +14,10 @@ import Vuex from 'vuex'
 
 window.Vue = require('vue');
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 import store from './store/auth';
 
-Vue.use(Vuetify)
+Vue.use(Vuetify);
 import "vuetify/dist/vuetify.min.css";
 
 import VueRouter from 'vue-router';

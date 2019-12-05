@@ -27,6 +27,8 @@ import TicTacToe from './components/game';
 import Login from './components/login';
 import Dashboard from './components/dashboard';
 import Register from './components/register';
+import Movement from './components/movement';
+
 
 Vue.use(VueRouter);
 //Vue Router makes the line below deprecated
@@ -39,7 +41,8 @@ const routes = [
     {path:'/register',component:Register},
     {path:'/dashboard', component:Dashboard},
     {path:'/users',component:Users},
-    {path:'/game',component:TicTacToe}
+    {path:'/game',component:TicTacToe},
+    {path:'/movements',component:Movement}
 ]
 
 const router = new VueRouter({

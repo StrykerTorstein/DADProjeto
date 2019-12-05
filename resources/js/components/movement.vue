@@ -3,6 +3,9 @@
     <div class="jumbotron" >
 		    <h1>Movements</h1>
 		</div>
+    <div>
+        
+    </div>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -48,6 +51,7 @@ export default {
   data: () => {
     return {
       currentUser: null,
+      user:null,
       movements: null,
       movement: undefined
       
@@ -62,7 +66,7 @@ export default {
       this.$emit("delete-user", user);
     },
     getMovements: function() {
-      axios.get("api/"+ this.$data.user.id +"/movements").then(response => {
+      axios.get("api/"+ this.user.id +"/movements").then(response => {
         this.movements = response.data.data;
       });
     }
@@ -72,7 +76,7 @@ export default {
   },
   mounted() {
     this.$store.commit("loadTokenAndUserFromSession");
-    this.$data.user = this.$store.state.user;
+    this.user = this.$store.state.user;
     this.getMovements();
   },
 };

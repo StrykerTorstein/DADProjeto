@@ -2153,12 +2153,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["users"],
   data: function data() {
     return {
       currentUser: null,
+      user: null,
       movements: null,
       movement: undefined
     };
@@ -2174,7 +2178,7 @@ __webpack_require__.r(__webpack_exports__);
     getMovements: function getMovements() {
       var _this = this;
 
-      axios.get("api/" + this.$data.user.id + "/movements").then(function (response) {
+      axios.get("api/" + this.user.id + "/movements").then(function (response) {
         _this.movements = response.data.data;
       });
     }
@@ -2184,7 +2188,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.$store.commit("loadTokenAndUserFromSession");
-    this.$data.user = this.$store.state.user;
+    this.user = this.$store.state.user;
     this.getMovements();
   }
 });
@@ -21337,6 +21341,8 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _vm._m(0),
+    _vm._v(" "),
+    _c("div"),
     _vm._v(" "),
     _c("table", { staticClass: "table table-striped" }, [
       _c("thead", [

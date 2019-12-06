@@ -34,7 +34,7 @@ export default {
         logout() {
             this.showMessage = false;
             //Todo implement sockets
-            //this.$socket.emit('logout',this.$store.state.user);
+            this.$socket.emit('logout',this.$store.state.user);
             axios
                 .post("api/logout")
                 .then(response => {

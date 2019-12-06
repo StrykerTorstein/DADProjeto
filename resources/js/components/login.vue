@@ -65,6 +65,11 @@ export default {
           //Todo: Implement socket
           //this.$socket.emit('login',response.data.data);
           this.$store.commit("setUser",response.data);
+          
+          if(response.data){
+            this.$socket.emit('login',response.data);
+          }
+
           this.$router.push({ path: '/dashboard' });
         });
       }).catch(error => { 

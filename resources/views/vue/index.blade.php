@@ -9,6 +9,7 @@
     <router-link v-show="this.$store.state.user" to="/dashboard">Dashboard</router-link>
     <router-link v-show="this.$store.state.user" to="/movements">Movements</router-link>
     <!--<router-link to="/game">Tic Tac Toe</router-link>-->
+    <router-link to="/chat">Chat</router-link>
     <router-link v-show="this.$store.state.user" to="/logout">Logout</router-link>
     <router-view></router-view>
 @endsection

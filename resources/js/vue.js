@@ -28,12 +28,21 @@ import TicTacToe from './components/game';
 import Dashboard from './components/dashboard';
 import Register from './components/register';
 import Movement from './components/movement';
+import Chat from './components/chat';
 import LoginComponent from "./components/login.vue";
 import LogoutComponent from "./components/logout.vue";
 
 
 const Login = Vue.component("login", LoginComponent);
 const Logout = Vue.component("logout", LogoutComponent);
+
+import VueSocketIO from 'vue-socket.io';
+//Replace the connection with the IP of the server being used
+Vue.use(new VueSocketIO(
+    {
+        debug: true,
+        connection: 'http://localhost:8080'
+    }));
 
 
 Vue.use(VueRouter);
@@ -48,6 +57,7 @@ const routes = [
     {path:'/users',component:Users},
     {path:'/game',component:TicTacToe},
     {path:'/movements',component:Movement, name: "movements"},
+    {path:'/chat', component: Chat, name: "chat"},
     {path:'/login', component: Login, name: "login"},
     {path:'/logout', component: Logout, name: "logout"}
 ]
@@ -82,11 +92,9 @@ const app = new Vue({
     },
     created() {
         this.$store.commit("loadTokenAndUserFromSession");
-        /*
         if(this.$store.state.user){
             this.$socket.emit('login',this.$store.state.user);
         }
-        */
     },
     methods: {
         

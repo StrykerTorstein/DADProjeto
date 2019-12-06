@@ -47,8 +47,39 @@ class UserControllerAPI extends Controller
         $user->fill($request->all());
         //$user->password = Hash::make($user->password); //cannot use this: 'password' is not in the 'fillable'
         $user->password = bcrypt($request->password);
+
+        if($request->hasFile('photo')){
+            //setPhoto($user,$request->photo);
+            $file = $request->photo;
+            $fileNew = \Storage::putFile('public/fotos', $file);
+            $filename = basename($fileNew);
+            $user->photo = $filename;
+        }
+
+        //savePhoto($user,$request->photoFile);
+        /*
+        if($request->photoFile != null){
+            //Store the file in the storage
+            $photo = $request->file('photoFile');
+            $path = basename($photo->store('profile','public'));
+            $user->photo = basename($path);
+        }
+        */
+
         $user->save();
         return response()->json(new UserResource($user), 201);
+    }
+
+    public function setPhoto($user, $file)
+    {
+        //$targetDir = storage_path('app/fotos');
+        //$newfilename = $user->id . "_" . uniqid(). '.jpg';
+        //File::copy( $file, $targetDir.'/'.$newfilename);
+        //$user->photo = $newfilename;
+        
+        $fileNew = \Storage::putFile('fotos', $file);
+        $filename = basename($fileNew);
+        $user->photo = $filename;
     }
 
     public function update(Request $request, $id)

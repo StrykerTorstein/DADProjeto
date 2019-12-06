@@ -62,6 +62,8 @@ export default {
         this.$store.commit("setToken",token);
         console.log("User logged in!");
         axios.get("api/user").then(response => {
+          //Todo: Implement socket
+          //this.$socket.emit('login',response.data.data);
           this.$store.commit("setUser",response.data);
           this.$router.push({ path: '/dashboard' });
         });

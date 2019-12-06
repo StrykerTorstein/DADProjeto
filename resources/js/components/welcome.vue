@@ -5,8 +5,8 @@
       <h2>Number of virtual wallets our users have: {{number}}</h2>
     </div>
     <div>
-      <a class="btn btn-primary" v-on:click.prevent="gotoLoginPage()">Login</a>
-      <a class="btn btn-secondary" v-on:click.prevent="gotoRegisterPage()">Register</a>
+      <a v-show="!this.$store.state.user" class="btn btn-primary" v-on:click.prevent="gotoLoginPage()">Login</a>
+      <a v-show="!this.$store.state.user" class="btn btn-secondary" v-on:click.prevent="gotoRegisterPage()">Register</a>
     </div>
   </div>
 </template>

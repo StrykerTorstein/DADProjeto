@@ -6,8 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         token: "",
-        user: null,
-        isLogged: false
+        user: null
     },
     mutations: {
         clearUserAndToken: (state) => {
@@ -16,23 +15,19 @@ export default new Vuex.Store({
             sessionStorage.removeItem('user');
             sessionStorage.removeItem('token');
             axios.defaults.headers.common.Authorization = undefined;
-            state.isLogged=false;
         },
         clearUser: (state) => {
             state.user = null;
             sessionStorage.removeItem('user');
-            state.isLogged=false;
         },
         clearToken: (state) => {
             state.token = "";
             sessionStorage.removeItem('token');
             axios.defaults.headers.common.Authorization = undefined;
-            state.isLogged=false;
         },
         setUser: (state, user) => {
             state.user =  user;
             sessionStorage.setItem('user', JSON.stringify(user));
-            state.isLogged=true;
         },
         setToken: (state, token) => {
             state.token= token;

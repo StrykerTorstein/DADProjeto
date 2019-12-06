@@ -5,8 +5,11 @@
 @section('content')
     <!--<users></users>-->
     <router-link to="/">Welcome</router-link>
-    <!--<router-link to="/departments">Departments</router-link>-->
-    <router-link to="/game">Tic Tac Toe</router-link>
+    <router-link v-show="!this.$store.state.user" to="/login">Login</router-link>
+    <router-link v-show="this.$store.state.user" to="/dashboard">Dashboard</router-link>
+    <router-link v-show="this.$store.state.user" to="/movements">Movements</router-link>
+    <!--<router-link to="/game">Tic Tac Toe</router-link>-->
+    <router-link v-show="this.$store.state.user" to="/logout">Logout</router-link>
     <router-view></router-view>
 @endsection
 

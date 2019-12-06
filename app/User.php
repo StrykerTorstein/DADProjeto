@@ -17,6 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [ 
+        'id',
         'name',
         'email',
         'type',
@@ -61,6 +62,15 @@ class User extends Authenticatable
 
     public function isActive(){
         return $this->active === 1;
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne('App\Wallet', 'email', 'email');
+    }
+
+    public function movements(){
+        return $this->hasMany('App\Movement', 'wallet_id');
     }
 }
 

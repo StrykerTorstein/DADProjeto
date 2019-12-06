@@ -27,6 +27,7 @@
 import UserList from './userList';
 
 import UserEdit from './userEdit';
+import movementDetailsVue from './movementDetails.vue';
 
 export default {
   data: () => {
@@ -93,7 +94,8 @@ export default {
   },
   components:{
       'user-list' : UserList,
-      'user-edit' : UserEdit
+      'user-edit' : UserEdit,
+      //'movement-details' : movementDetails,
   }
 };
 </script>

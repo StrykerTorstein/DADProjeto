@@ -22,7 +22,7 @@ class LoginControllerAPI extends Controller
             'password' => $request->password,
             'scope' => ''
         ],
-            'exceptions' => false,
+            'exceptions' => false, 
         ]);
         $errorCode= $response->getStatusCode();
         if ($errorCode=='200') {

@@ -66,10 +66,15 @@
                 });
             },
             getPhoto(){
-                axios.get("api/users/getphotobyemail/"+this.movement.email).then(response => {
-                    this.movementPhoto = response.data;
-                    this.movementPhoto = "storage/fotos/" + this.movementPhoto;
-                });
+                this.movementPhoto = null;
+                if(this.movement.email){
+                    axios.get("api/users/getphotobyemail/"+this.movement.email).then(response => {
+                        this.movementPhoto = response.data;
+                        this.movementPhoto = "storage/fotos/" + this.movementPhoto;
+                    }).catch(error => { 
+                        this.movementPhoto = null;
+                    });
+                }
             }
         },
         mounted(){
@@ -77,6 +82,11 @@
             this.$data.user = this.$store.state.user;
             this.getMovements();
             this.getPhoto();
+        },
+        watch: {
+            movement: function () {
+                this.getPhoto();
+            }
         }
 	};
 </script>

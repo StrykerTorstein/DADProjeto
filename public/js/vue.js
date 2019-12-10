@@ -2450,10 +2450,16 @@ __webpack_require__.r(__webpack_exports__);
     getPhoto: function getPhoto() {
       var _this2 = this;
 
-      axios.get("api/users/getphotobyemail/" + this.movement.email).then(function (response) {
-        _this2.movementPhoto = response.data;
-        _this2.movementPhoto = "storage/fotos/" + _this2.movementPhoto;
-      });
+      this.movementPhoto = null;
+
+      if (this.movement.email) {
+        axios.get("api/users/getphotobyemail/" + this.movement.email).then(function (response) {
+          _this2.movementPhoto = response.data;
+          _this2.movementPhoto = "storage/fotos/" + _this2.movementPhoto;
+        })["catch"](function (error) {
+          _this2.movementPhoto = null;
+        });
+      }
     }
   },
   mounted: function mounted() {
@@ -2461,6 +2467,11 @@ __webpack_require__.r(__webpack_exports__);
     this.$data.user = this.$store.state.user;
     this.getMovements();
     this.getPhoto();
+  },
+  watch: {
+    movement: function movement() {
+      this.getPhoto();
+    }
   }
 });
 

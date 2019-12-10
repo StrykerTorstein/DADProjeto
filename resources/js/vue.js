@@ -9,16 +9,17 @@
 require('./bootstrap');
 
 import Vue from 'vue'
-import Vuetify from "vuetify";
+import Vuetify from 'vuetify';
 import Vuex from 'vuex'
+import store from './store/auth';
+import "vuetify/dist/vuetify.min.css";
+import vuetify from './plugins/vuetify';
+Vue.use(Vuetify);
 
 window.Vue = require('vue');
 
 Vue.use(Vuex);
-import store from './store/auth';
 
-Vue.use(Vuetify);
-import "vuetify/dist/vuetify.min.css";
 
 import VueRouter from 'vue-router';
 import Welcome from './components/welcome'
@@ -74,7 +75,7 @@ router.beforeEach((to, from, next) => {
         }
     }
     if (to.name == "logout") {
-        if (!store.state.user) {
+        if (!store.state.user) {vuetify
             next("/login");
             return;
         }
@@ -85,10 +86,9 @@ router.beforeEach((to, from, next) => {
 const app = new Vue({
     store,
     router,
+    vuetify,
     data: {
-        //departments: [],
-        player1: undefined,
-        player2: undefined
+        
     },
     created() {
         this.$store.commit("loadTokenAndUserFromSession");

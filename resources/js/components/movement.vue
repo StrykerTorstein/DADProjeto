@@ -54,7 +54,6 @@ export default {
       user:null,
       movements: null,
       movement: undefined
-      
     };
   },
   methods: {

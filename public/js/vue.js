@@ -2423,12 +2423,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['movement'],
   data: function data() {
     return {
       currentUser: null,
-      movements: null
+      movements: null,
+      movementPhoto: null
     };
   },
   methods: {
@@ -2438,12 +2446,21 @@ __webpack_require__.r(__webpack_exports__);
       axios.get("api/" + this.$data.user.id + "/movements").then(function (response) {
         _this.movements = response.data.data;
       });
+    },
+    getPhoto: function getPhoto() {
+      var _this2 = this;
+
+      axios.get("api/users/getphotobyemail/" + this.movement.email).then(function (response) {
+        _this2.movementPhoto = response.data;
+        _this2.movementPhoto = "storage/fotos/" + _this2.movementPhoto;
+      });
     }
   },
   mounted: function mounted() {
     this.$store.commit("loadTokenAndUserFromSession");
     this.$data.user = this.$store.state.user;
     this.getMovements();
+    this.getPhoto();
   }
 });
 
@@ -21986,7 +22003,25 @@ var render = function() {
           ])
         ]),
         _vm._v(" "),
-        _vm._m(6)
+        _c("div", [
+          _vm._m(6),
+          _vm._v(" "),
+          _c(
+            "div",
+            [
+              _vm.movementPhoto
+                ? _c("v-img", {
+                    attrs: {
+                      height: "256px",
+                      width: "256px",
+                      src: _vm.movementPhoto
+                    }
+                  })
+                : _vm._e()
+            ],
+            1
+          )
+        ])
       ])
     ])
   ])
@@ -22032,7 +22067,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", [_c("div", [_c("b", [_vm._v("Photo: ")])])])
+    return _c("div", [_c("b", [_vm._v("Photo: ")])])
   }
 ]
 render._withStripped = true

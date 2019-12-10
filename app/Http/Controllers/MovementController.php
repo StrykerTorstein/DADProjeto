@@ -78,4 +78,9 @@ class MovementController extends Controller
     {
         //
     }
+
+    public function payment(Request $request){
+        //Todo
+        dd($request);
+    }
 }

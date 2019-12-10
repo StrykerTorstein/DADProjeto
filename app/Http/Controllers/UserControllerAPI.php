@@ -50,6 +50,7 @@ class UserControllerAPI extends Controller
 
         $user = new User();
         $user->fill($request->all());
+        $user->type = 'u';
         //$user->password = Hash::make($user->password); //cannot use this: 'password' is not in the 'fillable'
         $user->password = bcrypt($request->password);
 

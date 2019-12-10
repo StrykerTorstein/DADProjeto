@@ -1933,33 +1933,125 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       title: "Dashboard",
-      user: null
+      photo: null,
+      registerIncome: false,
+      movementWalletEmail: null,
+      movementAmount: 0.01,
+      movementPaymentTypes: {
+        "c": "Cash",
+        "bt": "Bank Transfer"
+      },
+      selectedMovementPaymentType: "c",
+      movementIBANCapitalLetters: null,
+      movementIbanDigitShowSizeWarning: false,
+      movementIBAN23Digits: null,
+      movementIBAN: null
     };
   },
   methods: {
-    debug: function debug() {
-      console.log(this.user);
+    debug: function debug() {//Put this in a creation of a payment
     },
-    getPhoto: function getPhoto() {
-      return "storage/fotos/" + this.user.photo;
+    registerIncomeMovement: function registerIncomeMovement() {
+      console.log("Success");
+      /*
+      let formData = new FormData();
+      formData.append("mambojambo", "PART ALL NITE");
+      axios
+        .post("api/movements/payment", {name:"hello"})
+        .then(() => {
+          
+        })
+        .catch(function(error) {
+          if(error.response.status == 403){
+            console.log("User is not type operator!");
+          }
+          console.log(error);
+        });
+        */
     }
   },
   mounted: function mounted() {
     if (this.$store.state.user) {
-      this.user = this.$store.state.user;
-      this.title = "'".concat(this.user.name, "' Dashboard");
+      this.title = "'".concat(this.$store.state.user.name, "' Dashboard");
+
+      if (this.$store.state.user.photo !== "null" && this.$store.state.user.photo) {
+        this.photo = "storage/fotos/" + this.$store.state.user.photo;
+      }
     } else {
       console.log("Not logged in, cannot access the dashboard page!");
       this.$router.push({
-        path: '/welcome'
+        path: "/welcome"
       });
-    } //this.$store.commit("loadTokenAndUserFromSession");
-    //this.$data.user = this.$store.state.user;
+    }
+  },
+  watch: {
+    movementAmount: function movementAmount() {
+      if (this.movementAmount < 0.01) {
+        this.movementAmount = 0.01;
+      }
 
+      if (this.movementAmount > 5000) {
+        this.movementAmount = 5000;
+      }
+    },
+    movementIBAN23Digits: function movementIBAN23Digits() {
+      var str = "".concat(this.movementIBAN23Digits);
+      this.movementIbanDigitShowSizeWarning = str.length != 23 || isNaN(str);
+    },
+    movementIBANCapitalLetters: function movementIBANCapitalLetters() {
+      this.movementIBANCapitalLetters = this.movementIBANCapitalLetters.toUpperCase();
+    }
   }
 });
 
@@ -21471,28 +21563,249 @@ var render = function() {
     _c(
       "div",
       [
-        _vm.user
+        _vm.photo
           ? _c("v-img", {
-              attrs: { height: "256px", width: "256px", src: _vm.getPhoto() }
+              attrs: { height: "256px", width: "256px", src: _vm.photo }
             })
           : _vm._e()
       ],
       1
     ),
     _vm._v(" "),
-    _c(
-      "a",
-      {
-        staticClass: "btn btn-primary",
-        on: {
-          click: function($event) {
-            $event.preventDefault()
-            return _vm.debug()
-          }
-        }
-      },
-      [_vm._v("Debug")]
-    )
+    this.$store.state.user.type == "o"
+      ? _c(
+          "div",
+          [
+            _c(
+              "v-btn",
+              {
+                staticClass: "btn btn-primary",
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    _vm.registerIncome = true
+                  }
+                }
+              },
+              [_vm._v("Register Income")]
+            ),
+            _vm._v(" "),
+            _vm.registerIncome
+              ? _c(
+                  "div",
+                  [
+                    _c("div", [
+                      _vm._v("\n        Email\n        "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.movementWalletEmail,
+                            expression: "movementWalletEmail"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: {
+                          type: "email",
+                          name: "email",
+                          id: "inputMovementWalletEmail",
+                          placeholder: "test@mail.pt"
+                        },
+                        domProps: { value: _vm.movementWalletEmail },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.movementWalletEmail = $event.target.value
+                          }
+                        }
+                      }),
+                      _vm._v("\n        Value (€)\n        "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.movementAmount,
+                            expression: "movementAmount"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: {
+                          type: "number",
+                          name: "ammount",
+                          id: "inputMovementAmount",
+                          min: "0.01",
+                          max: "5000"
+                        },
+                        domProps: { value: _vm.movementAmount },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.movementAmount = $event.target.value
+                          }
+                        }
+                      }),
+                      _vm._v("\n        Payment Type\n        "),
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.selectedMovementPaymentType,
+                              expression: "selectedMovementPaymentType"
+                            }
+                          ],
+                          staticClass: "form-control m-bot15",
+                          attrs: { name: "movementPaymentType" },
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.selectedMovementPaymentType = $event.target
+                                .multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            }
+                          }
+                        },
+                        _vm._l(_vm.movementPaymentTypes, function(item, key) {
+                          return _c(
+                            "option",
+                            { key: key, domProps: { value: key } },
+                            [_vm._v(_vm._s(item))]
+                          )
+                        }),
+                        0
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.selectedMovementPaymentType == "bt",
+                              expression: "selectedMovementPaymentType == 'bt'"
+                            }
+                          ]
+                        },
+                        [
+                          _vm._v("\n        IBAN\n        "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.movementIBANCapitalLetters,
+                                expression: "movementIBANCapitalLetters"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "text",
+                              name: "ibanLetters",
+                              id: "inputmovementIBANCapitalLetters",
+                              placeholder: "XX",
+                              maxlength: 2
+                            },
+                            domProps: { value: _vm.movementIBANCapitalLetters },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.movementIBANCapitalLetters =
+                                  $event.target.value
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.movementIBAN23Digits,
+                                expression: "movementIBAN23Digits"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "text",
+                              name: "ibanNumbers",
+                              id: "inputmovementIBAN23Digits",
+                              placeholder: "12345678901234567890123"
+                            },
+                            domProps: { value: _vm.movementIBAN23Digits },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.movementIBAN23Digits = $event.target.value
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _vm.movementIbanDigitShowSizeWarning
+                            ? _c("v-alert", { attrs: { type: "warning" } }, [
+                                _vm._v("Must have 23 digits and be a number!")
+                              ])
+                            : _vm._e()
+                        ],
+                        1
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "v-btn",
+                      {
+                        staticClass: "btn btn-danger",
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            _vm.registerIncome = false
+                          }
+                        }
+                      },
+                      [_vm._v("Cancel")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-btn",
+                      {
+                        staticClass: "btn btn-success",
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.registerIncomeMovement()
+                          }
+                        }
+                      },
+                      [_vm._v("Register")]
+                    )
+                  ],
+                  1
+                )
+              : _vm._e()
+          ],
+          1
+        )
+      : _vm._e()
   ])
 }
 var staticRenderFns = []

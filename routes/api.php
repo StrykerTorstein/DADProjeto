@@ -17,6 +17,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::group(['middleware' => 'operator'], function(){
+    //Create a payment
+    Route::post('movements/payment', 'MovementController@payment');
+});
+
 Route::get('departments', 'DepartmentControllerAPI@index');
 Route::get('users', 'UserControllerAPI@index');
 Route::get('users/emailavailable', 'UserControllerAPI@emailAvailable');

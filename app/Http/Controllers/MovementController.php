@@ -49,7 +49,7 @@ class MovementController extends Controller
         $user = Auth::guard('api')->user();
         //dd($user -> wallet());
         
-        $movements = $user->movements()->orderBy('date', 'desc')->paginate(20);
+        $movements = $user->movements()->orderBy('date', 'desc')->paginate(5);
 
         return MovementResource::collection($movements);
         //return Movement::where("wallet_id", $id)->orderBy('date', 'desc')->paginate(10);

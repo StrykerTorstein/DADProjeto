@@ -15,7 +15,9 @@
         id="inputEmail"
         placeholder= "user1@mail.pt"
       />
+      <div>
       <label for="inputPassword">Password</label>
+      <div>
       <input
         type="password"
         class="form-control"
@@ -23,8 +25,12 @@
         name="password"
         id="inputPassword"
       />
-      <a class="btn btn-primary" v-on:click.prevent="login(loginEmail,loginPassword)">Login</a>
-      <a class="btn btn-secondary" v-on:click.prevent="gotoRegisterPage()">Register</a>
+      </div>
+      </div>
+      <div>
+      <v-btn color="primary" id="btn" v-on:click.prevent="login(loginEmail,loginPassword)">Login</v-btn>
+      <v-btn color="primary" id="btn" v-on:click.prevent="gotoRegisterPage()">Register</v-btn>
+      </div>
     </div>
     <div class="alert alert-warning" v-if="showWarning">
       <button type="button" class="close-btn" v-on:click="showWarning=false">&times;</button>
@@ -89,4 +95,7 @@ export default {
 </script>
 
 <style>
+  #btn{
+    color:black;
+  }
 </style>

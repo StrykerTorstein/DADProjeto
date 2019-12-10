@@ -1,3 +1,4 @@
+
 <template>
   <div> 
     <div class="jumbotron" >
@@ -22,7 +23,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="movement in movements" :key="movement.id" :class="{active: currentUser === user}">
+      <tr v-for="movement in movements.data" :key="movement.id" :class="{active: currentUser === user}">
         <th>{{movement.id}}</th>       
         <th>{{movement.type}}</th> 
         <th>{{movement.type_payment}}</th> 
@@ -33,7 +34,7 @@
         <th>{{movement.end_balance}}€</th> 
         <th>{{movement.value}}€</th>
         <td>
-            <a class="btn btn-sm btn-primary" id="btn" v-on:click.prevent="movementDetails(movement)">Details</a>
+            <v-btn small color="primary" id="btn" v-on:click.prevent="movementDetails(movement)">Details</v-btn>
 		    </td> 
       </tr>
     </tbody>
@@ -41,6 +42,10 @@
     <div> 
       <movement-details :movement="movement" v-if="movement"></movement-details> 
     </div> 
+  <div>
+  </div>
+    <v-btn v-if="movements.links.prev" small color="primary" id="btn" v-on:click.prevent="getMovementsPages(movements.links.prev)">Previous</v-btn>
+    <v-btn v-if="movements.links.next" small color="primary" id="btn" v-on:click.prevent="getMovementsPages(movements.links.next)">Next</v-btn>
   </div>
 </template>
 
@@ -53,8 +58,7 @@ export default {
       currentUser: null,
       user:null,
       movements: null,
-      movement: undefined
-      
+      movement: undefined,
     };
   },
   methods: {
@@ -67,7 +71,12 @@ export default {
     },
     getMovements: function() {
       axios.get("api/"+ this.user.id +"/movements").then(response => {
-        this.movements = response.data.data;
+        this.movements = response.data;
+      });
+    },
+    getMovementsPages: function(url){
+      axios.get(url).then(response => {
+        this.movements = response.data;
       });
     }
   },
@@ -84,6 +93,6 @@ export default {
 
 <style>
   #btn{
-    color:white;
+    color:black;
   }
 </style>

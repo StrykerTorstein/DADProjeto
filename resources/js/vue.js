@@ -25,14 +25,13 @@ import VueRouter from 'vue-router';
 import Welcome from './components/welcome'
 import Users from './components/users';
 import TicTacToe from './components/game';
-//import Login from './components/login';
 import Dashboard from './components/dashboard';
 import Register from './components/register';
 import Movement from './components/movement';
 import Chat from './components/chat';
+
 import LoginComponent from "./components/login.vue";
 import LogoutComponent from "./components/logout.vue";
-
 
 const Login = Vue.component("login", LoginComponent);
 const Logout = Vue.component("logout", LogoutComponent);
@@ -101,5 +100,15 @@ const app = new Vue({
     },
     mounted() {
         
-    }
+    },
+    sockets: {
+        //globally used socket methods
+        /*
+        movementSent (dataFromServer) {
+            console.log("movement sent!");
+            //this.$toasted.success('Message "' + dataFromServer[0] + '" was sent to "' +
+            //dataFromServer[1].name + '"');
+        }
+        */
+    },
 }).$mount("#app");

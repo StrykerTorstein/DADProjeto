@@ -5,7 +5,38 @@
 		    <h1>Movements</h1>
 		</div>
     <div>
-        
+      <div class="form-group">
+	        <label for="inputName">Id</label>
+	        <input
+	            type="text" class="form-control" v-model="filter.id"/>
+	    </div>
+      <div class="form-group">
+	        <label for="movement_id">Type</label>
+	        <select class="form-control" id="movement_id" name="movement_id" v-model="filter.type" >
+	            <!-- <option v-for="movement in movements" :key="movement.id" v-bind:value="movement.id"> {{ movement.type }} </option>-->
+	        </select>
+	    </div>
+      <div class="form-group">
+	        <label for="inputDate">Date Interval</label>
+	        <input
+	            type="date" class="form-control" v-model="filter.start_date"
+	            name="date" id="inputDate"/>
+          <br>
+            <input
+                type="date" class="form-control" v-model="filter.end_date"
+                name="date" id="inputDate"/>
+          <br>
+	    </div>
+      <div class="form-group">
+	        <label for="movement_id">Category</label>
+	        <select class="form-control" v-model="filter.category" >
+	            <!--<option v-for="movement in movements" :key="movement.category" v-bind:value="movement.category"> {{ movement.category }} </option>-->
+	        </select>
+	    </div>
+    </div>
+
+    <div>
+        <v-btn small color="primary" id="btn" v-on:click.prevent="getFilter()">Filter</v-btn>
     </div>
   <table class="table table-striped">
     <thead>
@@ -23,7 +54,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="movement in movements.data" :key="movement.id" :class="{active: currentUser === user}">
+      <tr v-for="movement in movements.data" :key="movement.id" >
         <th>{{movement.id}}</th>       
         <th>{{movement.type}}</th> 
         <th>{{movement.type_payment}}</th> 
@@ -57,8 +88,9 @@ export default {
     return {
       currentUser: null,
       user:null,
-      movements: null,
+      movements: {links:{}, meta:{}},
       movement: undefined,
+      filter:{}
     };
   },
   methods: {
@@ -72,12 +104,19 @@ export default {
     getMovements: function() {
       axios.get("api/"+ this.user.id +"/movements").then(response => {
         this.movements = response.data;
+        console.log(this.movements);
       });
     },
     getMovementsPages: function(url){
       axios.get(url).then(response => {
         this.movements = response.data;
+        
       });
+    },
+    getFilter: function(){
+      axios.post("api/" + this.user.id + "/movements", this.filter).then(response => {
+        this.movements=response.data;
+      })
     }
   },
   components:{

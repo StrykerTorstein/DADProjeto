@@ -2342,6 +2342,37 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["users"],
@@ -2349,8 +2380,12 @@ __webpack_require__.r(__webpack_exports__);
     return {
       currentUser: null,
       user: null,
-      movements: null,
-      movement: undefined
+      movements: {
+        links: {},
+        meta: {}
+      },
+      movement: undefined,
+      filter: {}
     };
   },
   methods: {
@@ -2366,6 +2401,7 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.get("api/" + this.user.id + "/movements").then(function (response) {
         _this.movements = response.data;
+        console.log(_this.movements);
       });
     },
     getMovementsPages: function getMovementsPages(url) {
@@ -2373,6 +2409,13 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.get(url).then(function (response) {
         _this2.movements = response.data;
+      });
+    },
+    getFilter: function getFilter() {
+      var _this3 = this;
+
+      axios.post("api/" + this.user.id + "/movements", this.filter).then(function (response) {
+        _this3.movements = response.data;
       });
     }
   },
@@ -21977,7 +22020,174 @@ var render = function() {
     [
       _vm._m(0),
       _vm._v(" "),
-      _c("div"),
+      _c("div", [
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "inputName" } }, [_vm._v("Id")]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.filter.id,
+                expression: "filter.id"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { type: "text" },
+            domProps: { value: _vm.filter.id },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.filter, "id", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "movement_id" } }, [_vm._v("Type")]),
+          _vm._v(" "),
+          _c("select", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.filter.type,
+                expression: "filter.type"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { id: "movement_id", name: "movement_id" },
+            on: {
+              change: function($event) {
+                var $$selectedVal = Array.prototype.filter
+                  .call($event.target.options, function(o) {
+                    return o.selected
+                  })
+                  .map(function(o) {
+                    var val = "_value" in o ? o._value : o.value
+                    return val
+                  })
+                _vm.$set(
+                  _vm.filter,
+                  "type",
+                  $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                )
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "inputDate" } }, [
+            _vm._v("Date Interval")
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.filter.start_date,
+                expression: "filter.start_date"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { type: "date", name: "date", id: "inputDate" },
+            domProps: { value: _vm.filter.start_date },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.filter, "start_date", $event.target.value)
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.filter.end_date,
+                expression: "filter.end_date"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { type: "date", name: "date", id: "inputDate" },
+            domProps: { value: _vm.filter.end_date },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.filter, "end_date", $event.target.value)
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("br")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
+          _c("label", { attrs: { for: "movement_id" } }, [_vm._v("Category")]),
+          _vm._v(" "),
+          _c("select", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.filter.category,
+                expression: "filter.category"
+              }
+            ],
+            staticClass: "form-control",
+            on: {
+              change: function($event) {
+                var $$selectedVal = Array.prototype.filter
+                  .call($event.target.options, function(o) {
+                    return o.selected
+                  })
+                  .map(function(o) {
+                    var val = "_value" in o ? o._value : o.value
+                    return val
+                  })
+                _vm.$set(
+                  _vm.filter,
+                  "category",
+                  $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                )
+              }
+            }
+          })
+        ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        [
+          _c(
+            "v-btn",
+            {
+              attrs: { small: "", color: "primary", id: "btn" },
+              on: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.getFilter()
+                }
+              }
+            },
+            [_vm._v("Filter")]
+          )
+        ],
+        1
+      ),
       _vm._v(" "),
       _c("table", { staticClass: "table table-striped" }, [
         _c("thead", [
@@ -22047,52 +22257,45 @@ var render = function() {
         _c(
           "tbody",
           _vm._l(_vm.movements.data, function(movement) {
-            return _c(
-              "tr",
-              {
-                key: movement.id,
-                class: { active: _vm.currentUser === _vm.user }
-              },
-              [
-                _c("th", [_vm._v(_vm._s(movement.id))]),
-                _vm._v(" "),
-                _c("th", [_vm._v(_vm._s(movement.type))]),
-                _vm._v(" "),
-                _c("th", [_vm._v(_vm._s(movement.type_payment))]),
-                _vm._v(" "),
-                _c("th", [_vm._v(_vm._s(movement.email))]),
-                _vm._v(" "),
-                _c("th", [_vm._v(_vm._s(movement.category))]),
-                _vm._v(" "),
-                _c("th", [_vm._v(_vm._s(movement.date))]),
-                _vm._v(" "),
-                _c("th", [_vm._v(_vm._s(movement.start_balance) + "€")]),
-                _vm._v(" "),
-                _c("th", [_vm._v(_vm._s(movement.end_balance) + "€")]),
-                _vm._v(" "),
-                _c("th", [_vm._v(_vm._s(movement.value) + "€")]),
-                _vm._v(" "),
-                _c(
-                  "td",
-                  [
-                    _c(
-                      "v-btn",
-                      {
-                        attrs: { small: "", color: "primary", id: "btn" },
-                        on: {
-                          click: function($event) {
-                            $event.preventDefault()
-                            return _vm.movementDetails(movement)
-                          }
+            return _c("tr", { key: movement.id }, [
+              _c("th", [_vm._v(_vm._s(movement.id))]),
+              _vm._v(" "),
+              _c("th", [_vm._v(_vm._s(movement.type))]),
+              _vm._v(" "),
+              _c("th", [_vm._v(_vm._s(movement.type_payment))]),
+              _vm._v(" "),
+              _c("th", [_vm._v(_vm._s(movement.email))]),
+              _vm._v(" "),
+              _c("th", [_vm._v(_vm._s(movement.category))]),
+              _vm._v(" "),
+              _c("th", [_vm._v(_vm._s(movement.date))]),
+              _vm._v(" "),
+              _c("th", [_vm._v(_vm._s(movement.start_balance) + "€")]),
+              _vm._v(" "),
+              _c("th", [_vm._v(_vm._s(movement.end_balance) + "€")]),
+              _vm._v(" "),
+              _c("th", [_vm._v(_vm._s(movement.value) + "€")]),
+              _vm._v(" "),
+              _c(
+                "td",
+                [
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { small: "", color: "primary", id: "btn" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.movementDetails(movement)
                         }
-                      },
-                      [_vm._v("Details")]
-                    )
-                  ],
-                  1
-                )
-              ]
-            )
+                      }
+                    },
+                    [_vm._v("Details")]
+                  )
+                ],
+                1
+              )
+            ])
           }),
           0
         )

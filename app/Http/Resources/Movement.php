@@ -19,7 +19,7 @@ class Movement extends JsonResource
             'wallet_id' => $this->wallet_id,
             'type' => $this->type,
             'email'=> ($this->transfer&&$this->wallet!=null)?$this->wallet->email:'',
-            'category' => ($this->category!=null)?$this->category->name:'',
+            'category' => (isset($this->category))?$this->category->name:'',
             'transfer_wallet_id' => $this->transfer_wallet_id,
             'type_payment' => $this->type_payment,
             'description' => $this->description,

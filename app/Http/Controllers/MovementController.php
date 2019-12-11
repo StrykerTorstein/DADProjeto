@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use App\Http\Resources\Wallet as WalletResource; 
 use App\Http\Resources\Movement as MovementResource; 
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -54,6 +55,23 @@ class MovementController extends Controller
         return MovementResource::collection($movements);
         //return Movement::where("wallet_id", $id)->orderBy('date', 'desc')->paginate(10);
 
+    }
+
+    public function filter(Request $request){
+
+        //$movements = DB::table('movements');
+
+        $user = Auth::guard('api')->user();
+        //dd($user -> wallet());
+        
+        $movements = $user->movements();
+
+        if(isset($request->id)){
+            $movements->where('id', '=', $request->id);
+        }
+
+        return MovementResource::collection($movements->paginate(5));
+        
     }
 
     /**

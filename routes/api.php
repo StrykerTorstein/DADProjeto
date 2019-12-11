@@ -33,6 +33,8 @@ Route::middleware('auth:api')->post('logout','LoginControllerAPI@logout');
 
 Route::get('{id}/movements', 'MovementController@show');
 
+Route::post('{id}/movements', 'MovementController@filter');
+
 /*
 Caso prefiram usar Resource Routes para o user, podem implementar antes as rotas:
 NOTA: neste caso, o parâmetro a receber nos métodos do controlador é user e não id

@@ -35,7 +35,14 @@
         </div>
         <div> 
                 <div> <b>Photo: </b></div>
-                <!--<div> {{movement.description}} </div>-->
+                <div>
+        <v-img
+          v-if="movementPhoto"
+          height="256px"
+          width="256px"
+          :src="movementPhoto"
+        >
+        </v-img></div>
         </div>
     </thead>
   </table>
@@ -48,22 +55,39 @@
 		data: function(){
 			return {
                 currentUser: null,
-                movements: null
-      
-    };
+                movements: null,
+                movementPhoto: null
+            };
         },
         methods: {
             getMovements: function() {
-            axios.get("api/"+ this.$data.user.id +"/movements").then(response => {
-            this.movements = response.data.data;
-        });
-    }
-},
-		mounted(){
-			this.$store.commit("loadTokenAndUserFromSession");
+                axios.get("api/"+ this.$data.user.id +"/movements").then(response => {
+                    this.movements = response.data.data;
+                });
+            },
+            getPhoto(){
+                this.movementPhoto = null;
+                if(this.movement.email){
+                    axios.get("api/users/getphotobyemail/"+this.movement.email).then(response => {
+                        this.movementPhoto = response.data;
+                        this.movementPhoto = "storage/fotos/" + this.movementPhoto;
+                    }).catch(error => { 
+                        this.movementPhoto = null;
+                    });
+                }
+            }
+        },
+        mounted(){
+            this.$store.commit("loadTokenAndUserFromSession");
             this.$data.user = this.$store.state.user;
             this.getMovements();
-		}
+            this.getPhoto();
+        },
+        watch: {
+            movement: function () {
+                this.getPhoto();
+            }
+        }
 	};
 </script>
 

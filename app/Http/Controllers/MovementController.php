@@ -78,4 +78,30 @@ class MovementController extends Controller
     {
         //
     }
+
+    //Done by operators
+    public function payment(Request $request){
+        $categoryId = Category::where('name','=',$request->categoryName)->pluck('id')->first();
+        $movement = new Movement();
+        $movement->fill($request->all());
+        $movement->category_id = $categoryId;
+        $movement->date = date("Y-m-d H:i:s");
+        $wallet = Wallet::findOrFail($request->wallet_id);
+        $user = User::whereEmail($wallet->email)->first();
+        $start_balance = $wallet->balance;
+        $end_balance = $start_balance - $movement->value;
+        $movement->start_balance = $start_balance;
+        $movement->end_balance = $end_balance;
+        $wallet->balance = $movement->end_balance;
+        $wallet->save();
+        $movement->save();
+        $arrayResponse = [$movement,$wallet];
+        $obj = (object) [
+            'movement' => $movement,
+            'wallet' => $wallet,
+            'user' => $user
+        ];
+        $response = json_encode($obj);
+        return $response;
+    }
 }

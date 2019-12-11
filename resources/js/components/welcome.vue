@@ -33,11 +33,9 @@ export default {
       this.$router.push({ path: '/register' });
     }
   },
-
   mounted() {
     this.getNumberOfWallets();
   },
-
 };
 </script>
 

@@ -1915,8 +1915,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! http */ "./node_modules/stream-http/index.js");
-/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _operatorMovement__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./operatorMovement */ "./resources/js/components/operatorMovement.vue");
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! http */ "./node_modules/stream-http/index.js");
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_1__);
 //
 //
 //
@@ -1933,189 +1934,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       title: "Dashboard",
-      photo: null,
-      registerIncome: false,
-      movementWalletEmail: null,
-      movementAmount: 0.01,
-      movementPaymentTypes: {
-        c: "Cash",
-        bt: "Bank Transfer"
-      },
-      selectedMovementPaymentType: "c",
-      movementIBANCapitalLetters: null,
-      movementIbanDigitShowSizeWarning: false,
-      movementIBAN23Digits: null,
-      movementIBAN: null,
-      movementSourceDescription: null,
-      movementCategoryName: null,
-      categoryNames: null
+      photo: null
     };
   },
   methods: {
     debug: function debug() {//Put this in a creation of a payment
-    },
-    registerIncomeMovement: function registerIncomeMovement() {
-      var _this = this;
-
-      if (this.movementIbanDigitShowSizeWarning === true) {
-        console.log("Invalid Data to send.");
-        return;
-      }
-
-      axios.get("api/wallets/exists/" + this.movementWalletEmail).then(function (response) {
-        if (response.data) {
-          var walletId = response.data.id;
-          var walletEmail = response.data.email;
-          var walletBalance = response.data.balance;
-          var movementType = _this.selectedMovementPaymentType;
-          var movementIban = null;
-
-          if (_this.movementPaymentTypes[movementType] == _this.movementPaymentTypes["bt"]) {
-            movementIban = _this.movementIBANCapitalLetters + _this.movementIBAN23Digits;
-
-            if (movementIban.length != 25) {
-              _this.movementIbanDigitShowSizeWarning = true;
-              return;
-            }
-          }
-
-          var movementAmount = _this.movementAmount;
-          var movementSourceDescription = _this.movementSourceDescription;
-          var movementStartBalance = walletBalance;
-          var movementEndBalance = Number(walletBalance) + Number(movementAmount);
-          var movementWalletId = walletId;
-          var movementCategoryTypeName = _this.movementCategoryName;
-          var movement = {
-            wallet_id: walletId,
-            type_payment: movementType,
-            iban: movementIban,
-            value: Number(movementAmount),
-            source_description: movementSourceDescription,
-            categoryName: movementCategoryTypeName,
-            transfer: 0
-          }; //console.log("Posting Movement:");
-          //console.log(movement);
-
-          axios.post("api/movements/payment", movement).then(function (response) {
-            //console.log(response.data.userid);
-            //Web socket force refresh on user id with email of wallet
-            if (response.data.user) {
-              var user = response.data.user;
-
-              _this.$socket.emit("sendMovement", _this.$store.state.user, user);
-            }
-          })["catch"](function (err) {});
-        } else {
-          console.log("Wallet does NOT exist");
-        }
-      })["catch"](function (err) {});
-      /*
-      let formData = new FormData();
-      formData.append("mambojambo", "PART ALL NITE");
-      axios
-        .post("api/movements/payment", {name:"hello"})
-        .then(() => {
-          
-        })
-        .catch(function(error) {
-          if(error.response.status == 403){
-            console.log("User is not type operator!");
-          }
-          console.log(error);
-        });
-        */
-    },
-    setCategoryNames: function setCategoryNames() {
-      var _this2 = this;
-
-      axios.get("api/categories/names/" + "i").then(function (response) {
-        _this2.categoryNames = response.data;
-        _this2.movementCategoryName = _this2.categoryNames[0];
-      })["catch"](function (error) {
-        //Hardcoded as a safety measure (although not the best solution...)
-        this.categoryNames = ["salary", "bonus", "royalties", "interests", "gifts", "dividends", "sales", "loan repayment", "loan", "other income"];
-      });
     }
   },
   mounted: function mounted() {
@@ -2131,37 +1960,9 @@ __webpack_require__.r(__webpack_exports__);
         path: "/welcome"
       });
     }
-
-    this.setCategoryNames();
   },
-  watch: {
-    movementAmount: function movementAmount() {
-      if (this.movementAmount < 0.01) {
-        this.movementAmount = 0.01;
-      }
-
-      if (this.movementAmount > 5000) {
-        this.movementAmount = 5000;
-      }
-    },
-    movementIBAN23Digits: function movementIBAN23Digits() {
-      var str = "".concat(this.movementIBAN23Digits);
-      this.movementIbanDigitShowSizeWarning = str.length != 23 || isNaN(str);
-    },
-    movementIBANCapitalLetters: function movementIBANCapitalLetters() {
-      this.movementIBANCapitalLetters = this.movementIBANCapitalLetters.toUpperCase();
-      var str = "".concat(this.movementIBANCapitalLetters);
-      this.movementIbanDigitShowSizeWarning = str.length != 2 || !isNaN(str) || !isNaN(str[0]) || !isNaN(str[1]);
-    }
-  },
-  sockets: {
-    movementSent: function movementSent(dataFromServer) {
-      //Maybe install toasted?
-      //Clear inputs
-      //Close the register income button
-      //Transfer all this crap onto a separate "operator" component
-      console.log("Movement sent!");
-    }
+  components: {
+    "operator-movement": _operatorMovement__WEBPACK_IMPORTED_MODULE_0__["default"]
   }
 });
 
@@ -2706,6 +2507,237 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     movement: function movement() {
       this.getPhoto();
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/operatorMovement.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/operatorMovement.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! http */ "./node_modules/stream-http/index.js");
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_0__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      registerIncome: false,
+      movementWalletEmail: null,
+      movementAmount: 0.01,
+      movementPaymentTypes: {
+        c: "Cash",
+        bt: "Bank Transfer"
+      },
+      selectedMovementPaymentType: "c",
+      movementIBANCapitalLetters: null,
+      movementIbanDigitShowSizeWarning: false,
+      movementIBAN23Digits: null,
+      movementIBAN: null,
+      movementSourceDescription: null,
+      movementCategoryName: null,
+      categoryNames: null
+    };
+  },
+  methods: {
+    debug: function debug() {//Put this in a creation of a payment
+    },
+    registerIncomeMovement: function registerIncomeMovement() {
+      var _this = this;
+
+      if (this.movementIbanDigitShowSizeWarning === true) {
+        console.log("Invalid Data to send.");
+        return;
+      }
+
+      axios.get("api/wallets/exists/" + this.movementWalletEmail).then(function (response) {
+        if (response.data) {
+          var walletId = response.data.id;
+          var walletEmail = response.data.email;
+          var walletBalance = response.data.balance;
+          var movementType = _this.selectedMovementPaymentType;
+          var movementIban = null;
+
+          if (_this.movementPaymentTypes[movementType] == _this.movementPaymentTypes["bt"]) {
+            movementIban = _this.movementIBANCapitalLetters + _this.movementIBAN23Digits;
+
+            if (movementIban.length != 25) {
+              _this.movementIbanDigitShowSizeWarning = true;
+              return;
+            }
+          }
+
+          var movementAmount = _this.movementAmount;
+          var movementSourceDescription = _this.movementSourceDescription;
+          var movementStartBalance = walletBalance;
+          var movementEndBalance = Number(walletBalance) + Number(movementAmount);
+          var movementWalletId = walletId;
+          var movementCategoryTypeName = _this.movementCategoryName;
+          var movement = {
+            wallet_id: walletId,
+            type_payment: movementType,
+            iban: movementIban,
+            value: Number(movementAmount),
+            source_description: movementSourceDescription,
+            categoryName: movementCategoryTypeName,
+            transfer: 0
+          }; //console.log("Posting Movement:");
+          //console.log(movement);
+
+          axios.post("api/movements/payment", movement).then(function (response) {
+            //console.log(response.data.userid);
+            //Web socket force refresh on user id with email of wallet
+            if (response.data.user) {
+              var user = response.data.user;
+
+              _this.$socket.emit("sendMovement", _this.$store.state.user, user);
+            }
+          })["catch"](function (err) {});
+        } else {
+          console.log("Wallet does NOT exist");
+        }
+      })["catch"](function (err) {});
+    },
+    setCategoryNames: function setCategoryNames() {
+      var _this2 = this;
+
+      axios.get("api/categories/names/" + "i").then(function (response) {
+        _this2.categoryNames = response.data;
+        _this2.movementCategoryName = _this2.categoryNames[0];
+      })["catch"](function (error) {
+        //Hardcoded as a safety measure (although not the best solution...)
+        this.categoryNames = ["salary", "bonus", "royalties", "interests", "gifts", "dividends", "sales", "loan repayment", "loan", "other income"];
+      });
+    }
+  },
+  mounted: function mounted() {
+    if (this.$store.state.user) {
+      this.title = "'".concat(this.$store.state.user.name, "' Dashboard");
+
+      if (this.$store.state.user.photo !== "null" && this.$store.state.user.photo) {
+        this.photo = "storage/fotos/" + this.$store.state.user.photo;
+      }
+    } else {
+      console.log("Not logged in, cannot access the dashboard page!");
+      this.$router.push({
+        path: "/welcome"
+      });
+    }
+
+    this.setCategoryNames();
+  },
+  watch: {
+    movementAmount: function movementAmount() {
+      if (this.movementAmount < 0.01) {
+        this.movementAmount = 0.01;
+      }
+
+      if (this.movementAmount > 5000) {
+        this.movementAmount = 5000;
+      }
+    },
+    movementIBAN23Digits: function movementIBAN23Digits() {
+      var str = "".concat(this.movementIBAN23Digits);
+      this.movementIbanDigitShowSizeWarning = str.length != 23 || isNaN(str);
+    },
+    movementIBANCapitalLetters: function movementIBANCapitalLetters() {
+      this.movementIBANCapitalLetters = this.movementIBANCapitalLetters.toUpperCase();
+      var str = "".concat(this.movementIBANCapitalLetters);
+      this.movementIbanDigitShowSizeWarning = str.length != 2 || !isNaN(str) || !isNaN(str[0]) || !isNaN(str[1]);
+    }
+  },
+  sockets: {
+    movementSent: function movementSent(dataFromServer) {
+      //Maybe install toasted?
+      //Clear inputs
+      //Close the register income button
+      //Transfer all this onto a separate "operator" component
+      console.log("Movement sent!");
     }
   }
 });
@@ -29668,304 +29700,7 @@ var render = function() {
     ),
     _vm._v(" "),
     this.$store.state.user.type == "o"
-      ? _c(
-          "div",
-          [
-            _c(
-              "v-btn",
-              {
-                staticClass: "btn btn-primary",
-                on: {
-                  click: function($event) {
-                    $event.preventDefault()
-                    _vm.registerIncome = true
-                  }
-                }
-              },
-              [_vm._v("Register Income")]
-            ),
-            _vm._v(" "),
-            _vm.registerIncome
-              ? _c(
-                  "div",
-                  [
-                    _c("div", [
-                      _vm._v("\n        Email\n        "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.movementWalletEmail,
-                            expression: "movementWalletEmail"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: {
-                          type: "email",
-                          name: "email",
-                          id: "inputMovementWalletEmail",
-                          placeholder: "test@mail.pt"
-                        },
-                        domProps: { value: _vm.movementWalletEmail },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.movementWalletEmail = $event.target.value
-                          }
-                        }
-                      }),
-                      _vm._v("\n        Value (€)\n        "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.movementAmount,
-                            expression: "movementAmount"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: {
-                          type: "number",
-                          name: "ammount",
-                          id: "inputMovementAmount",
-                          min: "0.01",
-                          max: "5000"
-                        },
-                        domProps: { value: _vm.movementAmount },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.movementAmount = $event.target.value
-                          }
-                        }
-                      }),
-                      _vm._v("\n        Category\n        "),
-                      _c(
-                        "select",
-                        {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.movementCategoryName,
-                              expression: "movementCategoryName"
-                            }
-                          ],
-                          staticClass: "form-control m-bot15",
-                          attrs: { name: "movementCatType" },
-                          on: {
-                            change: function($event) {
-                              var $$selectedVal = Array.prototype.filter
-                                .call($event.target.options, function(o) {
-                                  return o.selected
-                                })
-                                .map(function(o) {
-                                  var val = "_value" in o ? o._value : o.value
-                                  return val
-                                })
-                              _vm.movementCategoryName = $event.target.multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
-                            }
-                          }
-                        },
-                        _vm._l(_vm.categoryNames, function(item) {
-                          return _c(
-                            "option",
-                            { key: item, domProps: { value: item } },
-                            [_vm._v(_vm._s(item))]
-                          )
-                        }),
-                        0
-                      ),
-                      _vm._v("\n        Payment Type\n        "),
-                      _c(
-                        "select",
-                        {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.selectedMovementPaymentType,
-                              expression: "selectedMovementPaymentType"
-                            }
-                          ],
-                          staticClass: "form-control m-bot15",
-                          attrs: { name: "movementPaymentType" },
-                          on: {
-                            change: function($event) {
-                              var $$selectedVal = Array.prototype.filter
-                                .call($event.target.options, function(o) {
-                                  return o.selected
-                                })
-                                .map(function(o) {
-                                  var val = "_value" in o ? o._value : o.value
-                                  return val
-                                })
-                              _vm.selectedMovementPaymentType = $event.target
-                                .multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
-                            }
-                          }
-                        },
-                        _vm._l(_vm.movementPaymentTypes, function(item, key) {
-                          return _c(
-                            "option",
-                            { key: key, domProps: { value: key } },
-                            [_vm._v(_vm._s(item))]
-                          )
-                        }),
-                        0
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        {
-                          directives: [
-                            {
-                              name: "show",
-                              rawName: "v-show",
-                              value: _vm.selectedMovementPaymentType == "bt",
-                              expression: "selectedMovementPaymentType == 'bt'"
-                            }
-                          ]
-                        },
-                        [
-                          _vm._v("\n          IBAN\n          "),
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.movementIBANCapitalLetters,
-                                expression: "movementIBANCapitalLetters"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "text",
-                              name: "ibanLetters",
-                              id: "inputmovementIBANCapitalLetters",
-                              placeholder: "XX",
-                              maxlength: 2
-                            },
-                            domProps: { value: _vm.movementIBANCapitalLetters },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.movementIBANCapitalLetters =
-                                  $event.target.value
-                              }
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.movementIBAN23Digits,
-                                expression: "movementIBAN23Digits"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "text",
-                              name: "ibanNumbers",
-                              id: "inputmovementIBAN23Digits",
-                              placeholder: "12345678901234567890123"
-                            },
-                            domProps: { value: _vm.movementIBAN23Digits },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.movementIBAN23Digits = $event.target.value
-                              }
-                            }
-                          }),
-                          _vm._v(" "),
-                          _vm.movementIbanDigitShowSizeWarning
-                            ? _c("v-alert", { attrs: { type: "warning" } }, [
-                                _vm._v("Must have 2 letters and 23 digits!")
-                              ])
-                            : _vm._e()
-                        ],
-                        1
-                      ),
-                      _vm._v("Description\n        "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.movementSourceDescription,
-                            expression: "movementSourceDescription"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: {
-                          type: "text",
-                          name: "inputMovementSourceDescription",
-                          id: "movementSourceDescription",
-                          placeholder: "Movement source description"
-                        },
-                        domProps: { value: _vm.movementSourceDescription },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.movementSourceDescription = $event.target.value
-                          }
-                        }
-                      })
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "v-btn",
-                      {
-                        staticClass: "btn btn-danger",
-                        on: {
-                          click: function($event) {
-                            $event.preventDefault()
-                            _vm.registerIncome = false
-                          }
-                        }
-                      },
-                      [_vm._v("Cancel")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "v-btn",
-                      {
-                        staticClass: "btn btn-success",
-                        on: {
-                          click: function($event) {
-                            $event.preventDefault()
-                            return _vm.registerIncomeMovement()
-                          }
-                        }
-                      },
-                      [_vm._v("Register")]
-                    )
-                  ],
-                  1
-                )
-              : _vm._e()
-          ],
-          1
-        )
+      ? _c("div", [_c("operator-movement")], 1)
       : _vm._e()
   ])
 }
@@ -30555,6 +30290,326 @@ var staticRenderFns = [
     return _c("div", [_c("b", [_vm._v("Photo: ")])])
   }
 ]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/operatorMovement.vue?vue&type=template&id=41d5163e&":
+/*!*******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/operatorMovement.vue?vue&type=template&id=41d5163e& ***!
+  \*******************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "jumbotron" },
+    [
+      _c(
+        "v-btn",
+        {
+          staticClass: "btn btn-primary",
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              _vm.registerIncome = true
+            }
+          }
+        },
+        [_vm._v("Register Income")]
+      ),
+      _vm._v(" "),
+      _vm.registerIncome
+        ? _c(
+            "div",
+            [
+              _c("div", [
+                _vm._v("\n      Email\n      "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.movementWalletEmail,
+                      expression: "movementWalletEmail"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "email",
+                    name: "email",
+                    id: "inputMovementWalletEmail",
+                    placeholder: "test@mail.pt"
+                  },
+                  domProps: { value: _vm.movementWalletEmail },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.movementWalletEmail = $event.target.value
+                    }
+                  }
+                }),
+                _vm._v("\n      Value (€)\n      "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.movementAmount,
+                      expression: "movementAmount"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "number",
+                    name: "ammount",
+                    id: "inputMovementAmount",
+                    min: "0.01",
+                    max: "5000"
+                  },
+                  domProps: { value: _vm.movementAmount },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.movementAmount = $event.target.value
+                    }
+                  }
+                }),
+                _vm._v("\n      Category\n      "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.movementCategoryName,
+                        expression: "movementCategoryName"
+                      }
+                    ],
+                    staticClass: "form-control m-bot15",
+                    attrs: { name: "movementCatType" },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.movementCategoryName = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      }
+                    }
+                  },
+                  _vm._l(_vm.categoryNames, function(item) {
+                    return _c(
+                      "option",
+                      { key: item, domProps: { value: item } },
+                      [_vm._v(_vm._s(item))]
+                    )
+                  }),
+                  0
+                ),
+                _vm._v("\n      Payment Type\n      "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.selectedMovementPaymentType,
+                        expression: "selectedMovementPaymentType"
+                      }
+                    ],
+                    staticClass: "form-control m-bot15",
+                    attrs: { name: "movementPaymentType" },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.selectedMovementPaymentType = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      }
+                    }
+                  },
+                  _vm._l(_vm.movementPaymentTypes, function(item, key) {
+                    return _c(
+                      "option",
+                      { key: key, domProps: { value: key } },
+                      [_vm._v(_vm._s(item))]
+                    )
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.selectedMovementPaymentType == "bt",
+                        expression: "selectedMovementPaymentType == 'bt'"
+                      }
+                    ]
+                  },
+                  [
+                    _vm._v("\n        IBAN\n        "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.movementIBANCapitalLetters,
+                          expression: "movementIBANCapitalLetters"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        type: "text",
+                        name: "ibanLetters",
+                        id: "inputmovementIBANCapitalLetters",
+                        placeholder: "XX",
+                        maxlength: 2
+                      },
+                      domProps: { value: _vm.movementIBANCapitalLetters },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.movementIBANCapitalLetters = $event.target.value
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.movementIBAN23Digits,
+                          expression: "movementIBAN23Digits"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        type: "text",
+                        name: "ibanNumbers",
+                        id: "inputmovementIBAN23Digits",
+                        placeholder: "12345678901234567890123"
+                      },
+                      domProps: { value: _vm.movementIBAN23Digits },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.movementIBAN23Digits = $event.target.value
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _vm.movementIbanDigitShowSizeWarning
+                      ? _c("v-alert", { attrs: { type: "warning" } }, [
+                          _vm._v("Must have 2 letters and 23 digits!")
+                        ])
+                      : _vm._e()
+                  ],
+                  1
+                ),
+                _vm._v("Description\n      "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.movementSourceDescription,
+                      expression: "movementSourceDescription"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "text",
+                    name: "inputMovementSourceDescription",
+                    id: "movementSourceDescription",
+                    placeholder: "Movement source description"
+                  },
+                  domProps: { value: _vm.movementSourceDescription },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.movementSourceDescription = $event.target.value
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c(
+                "v-btn",
+                {
+                  staticClass: "btn btn-danger",
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      _vm.registerIncome = false
+                    }
+                  }
+                },
+                [_vm._v("Cancel")]
+              ),
+              _vm._v(" "),
+              _c(
+                "v-btn",
+                {
+                  staticClass: "btn btn-success",
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      return _vm.registerIncomeMovement()
+                    }
+                  }
+                },
+                [_vm._v("Register")]
+              )
+            ],
+            1
+          )
+        : _vm._e()
+    ],
+    1
+  )
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -85518,6 +85573,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_movementDetails_vue_vue_type_template_id_bf3c0cd0___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_movementDetails_vue_vue_type_template_id_bf3c0cd0___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/operatorMovement.vue":
+/*!******************************************************!*\
+  !*** ./resources/js/components/operatorMovement.vue ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _operatorMovement_vue_vue_type_template_id_41d5163e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./operatorMovement.vue?vue&type=template&id=41d5163e& */ "./resources/js/components/operatorMovement.vue?vue&type=template&id=41d5163e&");
+/* harmony import */ var _operatorMovement_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./operatorMovement.vue?vue&type=script&lang=js& */ "./resources/js/components/operatorMovement.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _operatorMovement_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _operatorMovement_vue_vue_type_template_id_41d5163e___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _operatorMovement_vue_vue_type_template_id_41d5163e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/operatorMovement.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/operatorMovement.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/operatorMovement.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_operatorMovement_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./operatorMovement.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/operatorMovement.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_operatorMovement_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/operatorMovement.vue?vue&type=template&id=41d5163e&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/operatorMovement.vue?vue&type=template&id=41d5163e& ***!
+  \*************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_operatorMovement_vue_vue_type_template_id_41d5163e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./operatorMovement.vue?vue&type=template&id=41d5163e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/operatorMovement.vue?vue&type=template&id=41d5163e&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_operatorMovement_vue_vue_type_template_id_41d5163e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_operatorMovement_vue_vue_type_template_id_41d5163e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

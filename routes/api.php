@@ -16,8 +16,13 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-
+/*
 Route::group(['middleware' => 'operator'], function(){
+    //Create a payment
+    Route::post('movements/payment', 'MovementController@payment');
+});
+*/
+Route::group(['middleware' => ['auth:api','operator']], function(){
     //Create a payment
     Route::post('movements/payment', 'MovementController@payment');
 });

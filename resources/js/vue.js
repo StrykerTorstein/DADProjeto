@@ -49,6 +49,13 @@ Vue.use(VueRouter);
 //Vue Router makes the line below deprecated
 //Vue.component('users',Users);
 
+import Toasted from "vue-toasted";
+Vue.use(Toasted, {
+    position: "bottom-center",
+    duration: 5000,
+    type: "info"
+});
+
 const routes = [
     {path:'/',redirect:'/welcome'},
     {path:'/welcome',component:Welcome, name: "welcome"},

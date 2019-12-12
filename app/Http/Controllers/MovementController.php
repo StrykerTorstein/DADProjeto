@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Response;
 use App\Http\Resources\Wallet as WalletResource; 
 use App\Http\Resources\Movement as MovementResource; 
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 
 
@@ -75,8 +76,13 @@ class MovementController extends Controller
         }
 
         if(($request->has("start_date")) && ($request->has("end_date"))){
-            $movements->where('start_date', '=', $request->date)->orderBy('date', 'desc');
+            $carbon = new Carbon($request->end_date);
+            $carbon->addDays(1);
+            $movements->where([['date', '>=', $request->start_date], ['date', '<=', $carbon]])->orderBy('date', 'desc');
+            //where('date', '>=', $request->start_date)->where('date', '<=', $request->end_date)
         }
+
+        
 
         return MovementResource::collection($movements->paginate(5));
         

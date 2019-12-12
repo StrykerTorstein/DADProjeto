@@ -27,6 +27,10 @@ Route::group(['middleware' => ['auth:api','operator']], function(){
     Route::post('movements/payment', 'MovementController@payment');
 });
 
+Route::group(['middleware' => 'auth:api'], function(){
+    Route::get('users/checkNewPassword','UserControllerAPI@checkNewPassword');
+});
+
 Route::get('wallets/exists/{email}', 'WalletController@exists');
 
 Route::get('departments', 'DepartmentControllerAPI@index');

@@ -53,13 +53,15 @@ class UserControllerAPI extends Controller
         $user->type = 'u';
         //$user->password = Hash::make($user->password); //cannot use this: 'password' is not in the 'fillable'
         $user->password = bcrypt($request->password);
-
+        dd($user->photo);
         if($request->photo != null && $request->hasFile('photo')){
             //setPhoto($user,$request->photo);
             $file = $request->photo;
             $fileNew = \Storage::putFile('public/fotos', $file);
             $filename = basename($fileNew);
             $user->photo = $filename;
+        }else{
+            $user->photo = null;
         }
 
         //savePhoto($user,$request->photoFile);
@@ -82,33 +84,46 @@ class UserControllerAPI extends Controller
         return response()->json(new UserResource($user), 201);
     }
 
-    public function setPhoto($user, $file)
-    {
-        //$targetDir = storage_path('app/fotos');
-        //$newfilename = $user->id . "_" . uniqid(). '.jpg';
-        //File::copy( $file, $targetDir.'/'.$newfilename);
-        //$user->photo = $newfilename;
-        
-        $fileNew = \Storage::putFile('fotos', $file);
-        $filename = basename($fileNew);
-        $user->photo = $filename;
-    }
-
     public function update(Request $request, $id)
     {
         $request->validate([
                 'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
-                'email' => 'required|email|unique:users,email,'.$id,
                 'password' => 'min:3',
                 'nif' => 'min:9'
             ]);
+        $user = User::findOrFail($id);
+        
         if($request->photo != null && $request->hasFile('photo')){
             $request->validate(['photo' => 'file|image|mimes:jpeg,bmp,png,jpg']);
         }
-        $user = User::findOrFail($id);
+
+        $userHasPhoto = $user->photo != null;
+
+        if($request->photo != null && $request->hasFile('photo')){
+            if($userHasPhoto){
+                $oldPhotoName = $user->photo;
+                $file = $request->photo;
+                //Parse 3rd parameter as the current filname
+                $fileNew = \Storage::putFileAs('public/fotos', $file, $oldPhotoName);
+                $filename = basename($fileNew);
+                $user->photo = $filename;
+            }else{
+                //Create a new one
+                $file = $request->photo;
+                $fileNew = \Storage::putFile('public/fotos', $file);
+                $filename = basename($fileNew);
+                $user->photo = $filename;
+            }
+            $request->photo = null;
+        }
+        if($user->type == 'u'){
+            $user->nif = $request->nif;
+        }
+        $user->name = $request->name;
+        $user->password = bcrypt($request->password);
+        $user->update();
 
 
-        $user->update($request->all());
         return new UserResource($user);
     }
 
@@ -140,5 +155,11 @@ class UserControllerAPI extends Controller
             $totalEmail = User::where('email', '=', $request->email)->count();
         }
         return response()->json($totalEmail == 0);
+    }
+
+    public function checkNewPassword(Request $request){
+        $passwordDb = User::where('id', '=', $request->userid)->pluck('password')->first();
+        $same = password_verify($request->newPassword, $passwordDb);
+        return $same ? "true" : "false";
     }
 }

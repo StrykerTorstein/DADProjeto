@@ -2,6 +2,59 @@
   <div class="jumbotron">
     <v-btn class="btn btn-primary" v-on:click.prevent="editUser = true">Edit Profile</v-btn>
     <div v-if="editUser">
+      <div>
+        <label for="inputName">Name</label>
+        <input
+          type="text"
+          class="form-control"
+          v-model="newName"
+          name="name"
+          id="inputName"
+          placeholder="Firstname Lastname"
+        />
+        <label for="inputPassword">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          v-model="newPassword"
+          name="password"
+          id="inputPassword"
+        />
+        <label for="inputPassword">Type Password Again</label>
+        <input
+          type="password"
+          class="form-control"
+          v-model="newPasswordCheck"
+          name="passwordCheck"
+          id="inputPasswordCheck"
+        />
+        <div v-if="this.$store.state.user.type == 'u'">
+          <label for="inputNif">NIF</label>
+          <input
+            type="number"
+            class="form-control"
+            v-model="newNif"
+            name="nif"
+            id="inputNif"
+            min="100000000"
+            max="999999999"
+          />
+        </div>
+        <div class="file-upload-form">
+          Upload an image file:
+          <input type="file" @change="previewImage" accept="image/*" />
+          <div>
+            <img
+              class="preview"
+              v-if="newPhotoImage"
+              :src="newPhotoImage"
+              height="256px"
+              width="256px"
+              accept="image/*"
+            />
+          </div>
+        </div>
+      </div>
       <v-btn class="btn btn-success" v-on:click.prevent="saveUserEdits()">Save</v-btn>
       <v-btn class="btn btn-danger" v-on:click.prevent="editUser = false">Cancel</v-btn>
     </div>
@@ -13,27 +66,121 @@ import { request } from "http";
 export default {
   data: () => {
     return {
-      editUser: false,  
-      photo: null
+      editUser: false,
+      photo: null,
+      newName: null,
+      newPassword: null,
+      newPasswordCheck: null,
+      showAlertPasswordMustBeDifferent: false,
+      newPhotoImage: null,
+      newPhotoFile: null,
+      newNif: null
     };
   },
-  methods: {
-    saveUserEdits(){
-        
+  watch: {
+    editUser: function(n) {
+      if(n === true){
+        this.newName = this.$store.state.user.name;
+        this.newNif = this.$store.state.user.nif;
+      }
     }
   },
-  mounted() {
-    if (this.$store.state.user) {
-      this.title = `'${this.$store.state.user.name}' Dashboard`;
-      if (
-        this.$store.state.user.photo !== "null" &&
-        this.$store.state.user.photo
-      ) {
-        this.photo = "storage/fotos/" + this.$store.state.user.photo;
+  methods: {
+    saveUserEdits() {
+      if (!this.newPassword || this.newPassword.length < 3) {
+        this.$toasted.show("Password must be larger than 3 characters!", {
+          type: "error"
+        });
+        return;
       }
-    } else {
-      console.log("Not logged in, cannot access the dashboard page!");
-      this.$router.push({ path: "/welcome" });
+      if (this.newPassword.localeCompare(this.newPasswordCheck) != 0) {
+        this.$toasted.show("Please type the correct password twice!", {
+          type: "error"
+        });
+        return;
+      }
+      var nameValid = this.validateName(this.newName);
+      if (!nameValid) {
+        this.$toasted.show("Invalid Name", {
+          type: "error"
+        });
+        return;
+      }
+      if (this.$store.state.user.type == "u") {
+        var nifvalid =
+          this.newNif !== null && (this.newNif >= 100000000 && this.newNif <= 999999999);
+        if (!nifvalid) {
+          this.$toasted.show("Invalid NIF (must be 9 digits long)", {
+            type: "error"
+          });
+          return;
+        }
+      }
+      axios
+        .get("api/users/checkNewPassword", {
+          params: {
+            userid: this.$store.state.user.id,
+            newPassword: this.newPassword
+          }
+        })
+        .then(response => {
+          var passwordEqualToLastPassword = response.data;
+          if (passwordEqualToLastPassword) {
+            this.$toasted.show(
+              "Password must be different than last password.",
+              { type: "error" }
+            );
+          } else {
+            let formData = new FormData();
+            formData.append("_method", "PUT");
+            if (this.newPhotoFile) {
+              formData.append("photo", this.newPhotoFile);
+            }
+            formData.set("name", this.newName);
+            formData.set("password", this.newPassword);
+            if (this.$store.state.user.type == "u") {
+              formData.set("nif", this.newNif);
+            }
+            //Axios.post although the formdata sets its as a PUT (apped)
+            axios
+              .post("api/users/" + this.$store.state.user.id, formData)
+              .then(response => {
+                var user = response.data.data;
+                this.$store.commit("setUser", user);
+                this.newNif = user.nif;
+                this.newName = user.name;
+              })
+              .catch(function(error) {
+                this.$toasted.show("Error updating user.", { type: "error" });
+                console.log(error);
+              });
+          }
+        });
+    },
+    validateName: function(name) {
+      if (!name) {
+        return false;
+      }
+      var re = /^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/;
+      return re.test(name) && name.length >= 3;
+    },
+    previewImage: function(event) {
+      var input = event.target;
+      // Ensure that you have a file before attempting to read it
+      if (input.files && input.files[0]) {
+        // create a new FileReader to read this image and convert to base64 format
+        var reader = new FileReader();
+        // Define a callback function to run, when FileReader finishes its job
+        reader.onload = e => {
+          // Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
+          // Read image as base64 and set to imageData
+          //console.log(e.target.result);
+          this.newPhotoImage = e.target.result;
+        };
+        // Start the reader job - read file as a data url (base64 format)
+        reader.readAsDataURL(input.files[0]);
+        this.newPhotoFile = input.files[0];
+      }
     }
   }
 };

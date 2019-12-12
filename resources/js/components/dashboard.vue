@@ -8,9 +8,9 @@
     </div>
     <div v-if="this.$store.state.user.type == 'o'">
       <!-- place operator component here -->
-      <operator-movement/>
+      <operator-movement />
     </div>
-    <user-edit/>
+    <user-edit />
     <!--<v-btn class="btn btn-primary" v-on:click.prevent="debug()">Debug</v-btn>-->
   </div>
 </template>
@@ -21,27 +21,19 @@ import userEdit from "./userEditProfile";
 import { request } from "http";
 export default {
   data: () => {
-    return {
-      title: "Dashboard",
-      photo: null
-    };
+    return {};
   },
   methods: {
-      debug: function() {
-        //Put this in a creation of a payment
-      }
+    debug: function() {
+      //Put this in a creation of a payment
+    }
   },
   mounted() {
-    if (this.$store.state.user) {
-      this.title = `'${this.$store.state.user.name}' Dashboard`;
-      if (
-        this.$store.state.user.photo !== "null" &&
-        this.$store.state.user.photo
-      ) {
-        this.photo = "storage/fotos/" + this.$store.state.user.photo;
-      }
-    } else {
+    if (!this.$store.state.user) {
       console.log("Not logged in, cannot access the dashboard page!");
+      this.$toasted.show("Not logged in, cannot access the dashboard page!", {
+        type: "error"
+      });
       this.$router.push({ path: "/welcome" });
     }
   },
@@ -49,6 +41,17 @@ export default {
     "operator-movement": operatorMovement,
     "user-edit": userEdit
   },
+  computed: {
+    title() {
+      return `'${this.$store.state.user.name}' Dashboard`;
+    },
+    photo() {
+      if(this.$store.state.user.photo){
+        return "storage/fotos/" + this.$store.state.user.photo;
+      }
+      return null;
+    }
+  }
 };
 </script>
 

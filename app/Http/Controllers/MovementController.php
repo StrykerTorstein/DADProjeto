@@ -66,8 +66,16 @@ class MovementController extends Controller
         
         $movements = $user->movements();
 
-        if(isset($request->id)){
-            $movements->where('id', '=', $request->id);
+        if(($request->has("id"))){
+            $movements->where('id', '=', $request->id)->orderBy('date', 'desc');
+        }
+        
+        if(($request->has("type"))){
+            $movements->where('type', '=', $request->type)->orderBy('date', 'desc');
+        }
+
+        if(($request->has("start_date")) && ($request->has("end_date"))){
+            $movements->where('start_date', '=', $request->date)->orderBy('date', 'desc');
         }
 
         return MovementResource::collection($movements->paginate(5));

@@ -12,9 +12,9 @@
 	    </div>
       <div class="form-group">
 	        <label for="movement_id">Type</label>
-	        <select class="form-control" id="movement_id" name="movement_id" v-model="filter.type" >
-	            <!-- <option v-for="movement in movements" :key="movement.id" v-bind:value="movement.id"> {{ movement.type }} </option>-->
-	        </select>
+          <select class="form-control" v-model="filter.type">
+            <option v-for="(item, key) in movementTypes" v-bind:key="key" :value="key"> {{item}} </option>
+          </select>
 	    </div>
       <div class="form-group">
 	        <label for="inputDate">Date Interval</label>
@@ -90,7 +90,11 @@ export default {
       user:null,
       movements: {links:{}, meta:{}},
       movement: undefined,
-      filter:{}
+      filter:{},
+      movementTypes:{
+        e: "Expense",
+        i: "Income"
+      }
     };
   },
   methods: {
@@ -108,9 +112,8 @@ export default {
       });
     },
     getMovementsPages: function(url){
-      axios.get(url).then(response => {
+      axios.post(url, this.filter).then(response => {
         this.movements = response.data;
-        
       });
     },
     getFilter: function(){

@@ -2385,7 +2385,11 @@ __webpack_require__.r(__webpack_exports__);
         meta: {}
       },
       movement: undefined,
-      filter: {}
+      filter: {},
+      movementTypes: {
+        e: "Expense",
+        i: "Income"
+      }
     };
   },
   methods: {
@@ -2407,7 +2411,7 @@ __webpack_require__.r(__webpack_exports__);
     getMovementsPages: function getMovementsPages(url) {
       var _this2 = this;
 
-      axios.get(url).then(function (response) {
+      axios.post(url, this.filter).then(function (response) {
         _this2.movements = response.data;
       });
     },
@@ -22050,35 +22054,43 @@ var render = function() {
         _c("div", { staticClass: "form-group" }, [
           _c("label", { attrs: { for: "movement_id" } }, [_vm._v("Type")]),
           _vm._v(" "),
-          _c("select", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.filter.type,
-                expression: "filter.type"
+          _c(
+            "select",
+            {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.filter.type,
+                  expression: "filter.type"
+                }
+              ],
+              staticClass: "form-control",
+              on: {
+                change: function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.$set(
+                    _vm.filter,
+                    "type",
+                    $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                  )
+                }
               }
-            ],
-            staticClass: "form-control",
-            attrs: { id: "movement_id", name: "movement_id" },
-            on: {
-              change: function($event) {
-                var $$selectedVal = Array.prototype.filter
-                  .call($event.target.options, function(o) {
-                    return o.selected
-                  })
-                  .map(function(o) {
-                    var val = "_value" in o ? o._value : o.value
-                    return val
-                  })
-                _vm.$set(
-                  _vm.filter,
-                  "type",
-                  $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-                )
-              }
-            }
-          })
+            },
+            _vm._l(_vm.movementTypes, function(item, key) {
+              return _c("option", { key: key, domProps: { value: key } }, [
+                _vm._v(" " + _vm._s(item) + " ")
+              ])
+            }),
+            0
+          )
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "form-group" }, [

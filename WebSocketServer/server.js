@@ -46,8 +46,22 @@ let loggedUsers = new LoggedUsers();
 io.on('connection', function (socket) {
     console.log('client has connected (socket ID = '+socket.id+')' );
 
+    socket.on('sendMovement',(sourceUser, destUser)=>{
+        let userInfo = loggedUsers.userInfoByID(destUser.id);
+        let socket_id = userInfo !== undefined ? userInfo.socketID : null;
+        if (socket_id === null) {
+            //socket.emit("privateMessage_unavailable", destUser);
+        } else {
+            io.to(socket_id).emit("movementReceived",destUser);
+            socket.emit("movementSent",sourceUser);
+        }
+    });
+
     socket.on('chat',(msg)=>{
-        socket.broadcast.emit('chat',msg); //Note this does NOT call this function (socket.on('chat)...)
+        //Note this does NOT call this function (socket.on('chat)...)
+        //This calls the function on the sockets: { ... chat ... } 
+        // on the target component that uses 'chat' socket method
+        socket.broadcast.emit('chat',msg);
     });
 
     socket.on('chat-dep',(msg,user)=>{

@@ -17,9 +17,18 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::group(['middleware' => 'operator'], function(){
+    //Create a payment
+    Route::post('movements/payment', 'MovementController@payment');
+});
+
+Route::get('wallets/exists/{email}', 'WalletController@exists');
+
 Route::get('departments', 'DepartmentControllerAPI@index');
 Route::get('users', 'UserControllerAPI@index');
 Route::get('users/emailavailable', 'UserControllerAPI@emailAvailable');
+
+Route::get('users/getphotobyemail/{email}','UserControllerAPI@getPhotoByEmail');
 
 Route::get('users/{id}', 'UserControllerAPI@show');
 Route::post('users', 'UserControllerAPI@store');
@@ -34,6 +43,8 @@ Route::middleware('auth:api')->post('logout','LoginControllerAPI@logout');
 Route::middleware('auth:api')->get('{id}/movements', 'MovementController@show');
 
 Route::middleware('auth:api')->post('{id}/movements', 'MovementController@filter');
+
+Route::get('categories/names/{type}','CategoryController@names');
 
 /*
 Caso prefiram usar Resource Routes para o user, podem implementar antes as rotas:

@@ -3,23 +3,28 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Wallet;
+use App\Category;
 
-class WalletController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function count()
+    public function index()
     {
-        //Variável com o numero de wallets
-        $nr_wallet = Wallet::count();
-        //enviar a resposta em formato json
-        return response()->json([
-            'total' => $nr_wallet
-        ], 200);
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
     }
 
     /**
@@ -30,7 +35,7 @@ class WalletController extends Controller
      */
     public function store(Request $request)
     {
-        //criar uma nova wallet
+        //
     }
 
     /**
@@ -41,7 +46,18 @@ class WalletController extends Controller
      */
     public function show($id)
     {
-        //mostrar uma wallet expecifica é como se fosse um where
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
     }
 
     /**
@@ -53,7 +69,7 @@ class WalletController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //atualizar um wallet
+        //
     }
 
     /**
@@ -64,12 +80,11 @@ class WalletController extends Controller
      */
     public function destroy($id)
     {
-        //apagar uma wallet
+        //
     }
 
-    public function exists($email){
-        //$wallet = Wallet::where('email', '=', $email)->first();
-        $wallet = Wallet::whereEmail($email)->first();
-        return $wallet;
+    public function names($type){
+        $names = Category::where('type', '=', $type)->pluck('name');
+        return $names;
     }
 }

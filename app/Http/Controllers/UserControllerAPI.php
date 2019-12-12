@@ -9,6 +9,7 @@ use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
 
 use App\User;
+use App\Wallet;
 use App\StoreUserRequest;
 use Hash;
 
@@ -38,17 +39,22 @@ class UserControllerAPI extends Controller
     public function store(Request $request)
     {
         $request->validate([
-                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'min:3',
-                'nif' => 'min:9'
-            ]);
+            'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'min:3',
+            'nif' => 'min:9'
+        ]);
+        if($request->photo != null && $request->hasFile('photo')){
+            $request->validate(['photo' => 'file|image|mimes:jpeg,bmp,png,jpg']);
+        }
+
         $user = new User();
         $user->fill($request->all());
+        $user->type = 'u';
         //$user->password = Hash::make($user->password); //cannot use this: 'password' is not in the 'fillable'
         $user->password = bcrypt($request->password);
 
-        if($request->hasFile('photo')){
+        if($request->photo != null && $request->hasFile('photo')){
             //setPhoto($user,$request->photo);
             $file = $request->photo;
             $fileNew = \Storage::putFile('public/fotos', $file);
@@ -67,6 +73,12 @@ class UserControllerAPI extends Controller
         */
 
         $user->save();
+        $wallet = new Wallet();
+        $wallet->id = $user->id;
+        $wallet->email = $user->email;
+        $wallet->balance = 0;
+        $wallet->save();
+
         return response()->json(new UserResource($user), 201);
     }
 
@@ -87,11 +99,22 @@ class UserControllerAPI extends Controller
         $request->validate([
                 'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
                 'email' => 'required|email|unique:users,email,'.$id,
+                'password' => 'min:3',
                 'nif' => 'min:9'
             ]);
+        if($request->photo != null && $request->hasFile('photo')){
+            $request->validate(['photo' => 'file|image|mimes:jpeg,bmp,png,jpg']);
+        }
         $user = User::findOrFail($id);
+
+
         $user->update($request->all());
         return new UserResource($user);
+    }
+
+    public function getPhotoByEmail($email){
+        $photo = User::where('email', '=', $email)->pluck('photo');
+        return $photo;
     }
 
     public function destroy($id)
@@ -100,6 +123,7 @@ class UserControllerAPI extends Controller
         $user->delete();
         return response()->json(null, 204);
     }
+
     public function emailAvailable(Request $request)
     {
         $totalEmail = 1;

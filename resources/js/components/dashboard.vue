@@ -10,12 +10,14 @@
       <!-- place operator component here -->
       <operator-movement/>
     </div>
+    <user-edit/>
     <!--<v-btn class="btn btn-primary" v-on:click.prevent="debug()">Debug</v-btn>-->
   </div>
 </template>
 
 <script>
 import operatorMovement from "./operatorMovement";
+import userEdit from "./userEditProfile";
 import { request } from "http";
 export default {
   data: () => {
@@ -44,7 +46,8 @@ export default {
     }
   },
   components: {
-    "operator-movement": operatorMovement
+    "operator-movement": operatorMovement,
+    "user-edit": userEdit
   },
 };
 </script>

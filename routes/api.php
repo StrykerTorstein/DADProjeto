@@ -29,6 +29,8 @@ Route::group(['middleware' => ['auth:api','operator']], function(){
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::get('users/checkNewPassword','UserControllerAPI@checkNewPassword');
+    Route::get('categories/all','CategoryController@all');
+    Route::post('movements/show/{id}', 'MovementController@show');
 });
 
 Route::get('wallets/exists/{email}', 'WalletController@exists');
@@ -54,6 +56,7 @@ Route::middleware('auth:api')->get('{id}/movements', 'MovementController@show');
 Route::middleware('auth:api')->post('{id}/movements', 'MovementController@filter');
 
 Route::get('categories/names/{type}','CategoryController@names');
+Route::middleware('auth:api')->get('wallet/{id}/balance', 'WalletController@getBalance');
 
 /*
 Caso prefiram usar Resource Routes para o user, podem implementar antes as rotas:

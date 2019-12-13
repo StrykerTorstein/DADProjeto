@@ -22,6 +22,12 @@ class WalletController extends Controller
         ], 200);
     }
 
+    public function getBalance($id){
+        $balance = Wallet::findOrFail($id)->pluck('balance')->first();
+        //$balance = DB::table('wallets')->select('balance')->where('id', $id)->get();
+        return $balance;
+    }
+
     /**
      * Store a newly created resource in storage.
      *

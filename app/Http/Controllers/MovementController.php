@@ -59,31 +59,50 @@ class MovementController extends Controller
     }
 
     public function filter(Request $request){
-
         //$movements = DB::table('movements');
-
         $user = Auth::guard('api')->user();
-        //dd($user -> wallet());
         
         $movements = $user->movements();
+        $wallet = $user->wallet();
+        $filteredMovementsId = [];
+        $filteredMovementsType = [];
+        $filteredMovementsDate = [];
+        //array_push($filteredMovements, $targetMovements);
 
-        if(($request->has("id"))){
-            $movements->where('id', '=', $request->id)->orderBy('date', 'desc');
+        if($request->has("id") && !empty($request->id)){
+            $m = $movements->where('id', '=', $request->id)->get();
+            array_push($filteredMovementsId, $m);
         }
         
-        if(($request->has("type"))){
-            $movements->where('type', '=', $request->type)->orderBy('date', 'desc');
+        if(($request->has("type") && !empty($request->type))){
+            $m = $movements->where('type', '=', $request->type)->get();
+            array_push($filteredMovementsType, $m);
         }
-
+        
         if(($request->has("start_date")) && ($request->has("end_date"))){
             $carbon = new Carbon($request->end_date);
             $carbon->addDays(1);
-            $movements->where([['date', '>=', $request->start_date], ['date', '<=', $carbon]])->orderBy('date', 'desc');
+            $m = $movements->where([['date', '>=', $request->start_date], ['date', '<=', $carbon]])->orderBy('date', 'desc');
+            array_push($filteredMovementsDate, $m);
             //where('date', '>=', $request->start_date)->where('date', '<=', $request->end_date)
         }
-
+        dd($request->category);
+        if($request->has("category")){
+            $category = DB::table('categories')->select('id')->where('name', $request->category)->get();
+            $movements = $movements->where('category_id', $category[0]->id);
+        }
         
-
+        if(($request->has("type_payment"))){
+            $movements->where('type_payment', '=', $request->type_payment)->orderBy('date', 'desc');
+        }
+        if($request->has("email") && !empty($request->email)){
+            //$transfer_email = DB::table('wallets')->select('id')->where('email', $request->transfer_email)->get();
+            $walletIds = Wallet::where('email','=',$request->email)->pluck('id');
+            if(count($walletIds) > 0){
+                $wallet->where('email', '=', $request->email)->orderBy('date', 'desc');
+            }
+        }
+        
         return MovementResource::collection($movements->paginate(5));
         
     }

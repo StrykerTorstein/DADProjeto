@@ -1,104 +1,70 @@
 
 <template>
   <div>
+    <br>
+    <h1>Balance: {{ balance }}€</h1>
     <div class="jumbotron">
       <h1>Movements</h1>
     </div>
-    <div></div>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>
-            <font size="5">Id</font>
-          </th>
-          <th>
-            <font size="5">Type</font>
-          </th>
-          <th>
-            <font size="5">Type of Payment</font>
-          </th>
-          <th>
-            <font size="5">Email</font>
-          </th>
-          <th>
-            <font size="5">Category</font>
-          </th>
-          <th>
-            <font size="5">Date</font>
-          </th>
-          <th>
-            <font size="5">Start Balance</font>
-          </th>
-          <th>
-            <font size="5">End Balance</font>
-          </th>
-          <th>
-            <font size="5">Value</font>
-          </th>
-          <th>
-            <font size="5">Actions</font>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="movement in movements"
-          :key="movement.id"
-          :class="{active: currentUser === user}"
-        >
-          <th>{{movement.id}}</th>
-          <th>{{movement.type}}</th>
-          <th>{{movement.type_payment}}</th>
-          <th>{{movement.email}}</th>
-          <th>{{movement.category}}</th>
-          <th>{{movement.date}}</th>
-          <th>{{movement.start_balance}}€</th>
-          <th>{{movement.end_balance}}€</th>
-          <th>{{movement.value}}€</th>
-          <td>
-            <a
-              class="btn btn-sm btn-primary"
-              id="btn"
-              v-on:click.prevent="movementDetails(movement)"
-            >Details</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
     <div>
-      <div class="form-group">
-	        <label for="inputName">Id</label>
-	        <input
-	            type="text" class="form-control" v-model="filter.id"/>
-	    </div>
-      <div class="form-group">
-	        <label for="movement_id">Type</label>
-          <select class="form-control" v-model="filter.type">
-            <option v-for="(item, key) in movementTypes" v-bind:key="key" :value="key"> {{item}} </option>
-          </select>
-	    </div>
-      <div class="form-group">
-	        <label for="inputDate">Date Interval</label>
-	        <input
-	            type="date" class="form-control" v-model="filter.start_date"
-	            name="date" id="inputDate"/>
-          <br>
-            <input
-                type="date" class="form-control" v-model="filter.end_date"
-                name="date" id="inputDate"/>
-          <br>
-	    </div>
-      <div class="form-group">
-	        <label for="movement_id">Category</label>
-	        <select class="form-control" v-model="filter.category" >
-	            <!--<option v-for="movement in movements" :key="movement.category" v-bind:value="movement.category"> {{ movement.category }} </option>-->
-	        </select>
-	    </div>
+      <div class="row">
+        <div class="col-md-3"> 
+          <div class="form-group">
+              <label for="inputName">Id</label>
+              <input type="text" class="form-control" v-model="filter.id"/>
+          </div>
+        </div>
+        <div class="col-md-3"> 
+          <div class="form-group">
+              <label for="movement_id">Type</label>
+              <select class="form-control" v-model="filter.type">
+                <option value='' selected> -- Type -- </option>
+                <option v-for="(item, key) in movementTypes" v-bind:key="key" :value="key"> {{item}} </option>
+              </select>
+          </div>
+        </div>
+        <div class="col-md-3"> 
+          <div class="form-group">
+              <label for="category_id">Category</label>
+              <select class="form-control" id="name" name="name" v-model="movements.category_id" >
+                  <option value='' selected> -- Category -- </option>
+                  <option v-for="item in movements" :key="item.id" v-bind:value="item.name"> {{ item.name }} </option>
+              </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+              <label for="inputDate">Date Interval</label>
+              <div>
+              <input type="date" class="form-control" v-model="filter.start_date" name="date" id="inputDate"/>
+              </div>
+              <br>
+              <div>
+              <input type="date" class="form-control" v-model="filter.end_date" name="date" id="inputDate"/>
+              </div>
+          </div>
+        </div>
+        <div class="col-md-3"> 
+          <div class="form-group">
+              <label for="movement_id">Type of Payment</label>
+              <select name="type_payment" class="form-control" v-model="filter.type_payment">
+                <option value='' selected> -- Type Of Payment -- </option>
+                <option v-for="(item, key) in movementTypesOfPayment" v-bind:key="key" :value="key"> {{item}} </option>
+              </select> 
+          </div>
+        </div>
+        <div class="col-md-3"> 
+          <div class="form-group">
+	          <label for="inputName">Email</label>
+	            <input type="text" class="form-control" v-model="filter.email"/>
+	        </div>
+        </div>
+      </div>
     </div>
-
-    <div>
-        <v-btn small color="primary" id="btn" v-on:click.prevent="getFilter()">Filter</v-btn>
-    </div>
+  <div>
+      <v-btn small color="primary" id="btn" v-on:click.prevent="getFilter()">Filter</v-btn>
+      <v-btn small color="primary" id="btn" v-on:click.prevent="getMovements()">Clear Filters</v-btn>
+  </div>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -155,7 +121,13 @@ export default {
       movementTypes:{
         e: "Expense",
         i: "Income"
-      }
+      },
+      movementTypesOfPayment:{
+        c: "Cash",
+        bt: "Bank Transfer",
+        mb: "MB Payment"
+      },
+      balance: ""
     };
   },
   methods: {
@@ -169,7 +141,7 @@ export default {
     getMovements: function() {
       axios.get("api/"+ this.user.id +"/movements").then(response => {
         this.movements = response.data;
-        console.log(this.movements);
+        //console.log(this.movements);
       });
     },
     getMovementsPages: function(url){
@@ -181,7 +153,16 @@ export default {
       axios.post("api/" + this.user.id + "/movements", this.filter).then(response => {
         this.movements=response.data;
       })
-    }
+    },
+    getBalance: function(){
+      axios.get('api/wallet/'+this.user.id+'/balance')
+          .then(response=>{
+              this.balance = response.data;
+          })
+          .catch(error => {                        
+              console.log(error);
+      })
+    },
   },
   components: {
     "movement-details": movementDetails
@@ -190,6 +171,8 @@ export default {
     this.$store.commit("loadTokenAndUserFromSession");
     this.user = this.$store.state.user;
     this.getMovements();
+    this.getFilter();
+    this.getBalance();
   },
   sockets: {
     movementReceived(dataFromServer) {
@@ -205,5 +188,7 @@ export default {
 <style>
   #btn{
     color:black;
+    margin-bottom: 20px;
+    margin-right: 20px;
   }
 </style>

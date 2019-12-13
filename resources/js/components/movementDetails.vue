@@ -2,7 +2,7 @@
 <div class="jumbotron" >
   <table class="table table-striped">
       <thead>
-      <h2><b>Movement Details</b></h2>
+      <h2><b>Movement {{movement.id}} Details</b></h2>
 	    <div>
             <div> 
                 <div> <b>Description: </b></div>

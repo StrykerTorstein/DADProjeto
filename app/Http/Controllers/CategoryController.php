@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Category;
+use App\Http\Resources\Category as CategoryResource;
 
 class CategoryController extends Controller
 {
@@ -86,5 +87,9 @@ class CategoryController extends Controller
     public function names($type){
         $names = Category::where('type', '=', $type)->pluck('name');
         return $names;
+    }
+
+    public function categoryName(){
+        return CategoryResource::Collection(Category::all());
     }
 }

@@ -63,9 +63,9 @@ class MovementController extends Controller
         //$movements = DB::table('movements');
 
         $user = Auth::guard('api')->user();
-        //dd($user -> wallet());
         
         $movements = $user->movements();
+        $wallet = $user->wallet();
 
         if(($request->has("id"))){
             $movements->where('id', '=', $request->id)->orderBy('date', 'desc');
@@ -81,7 +81,26 @@ class MovementController extends Controller
             $movements->where([['date', '>=', $request->start_date], ['date', '<=', $carbon]])->orderBy('date', 'desc');
             //where('date', '>=', $request->start_date)->where('date', '<=', $request->end_date)
         }
+/*
+        if(($request->has("category"))){
+            $category = DB::table('categories')->select('id')->where('name', $request->category)->get();
+            $movements = $movements->where('category_id', $category[0]->id);
+        }
+*/
+        if(($request->has("type_payment"))){
+            $movements->where('type_payment', '=', $request->type_payment)->orderBy('date', 'desc');
+        }
 
+        if(($request->has("email"))){
+
+            $transfer_email = DB::table('wallets')->select('id')->where('email', $request->transfer_email)->get();
+
+            if($transfer_email->isEmpty()){
+                return 'Transfer e-mail does not exist!';
+            }
+
+            $wallet->where('email', '=', $request->email)->orderBy('date', 'desc');
+        }
         
 
         return MovementResource::collection($movements->paginate(5));

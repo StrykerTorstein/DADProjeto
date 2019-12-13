@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Wallet;
+use Illuminate\Support\Facades\DB;
 
 class WalletController extends Controller
 {
@@ -20,6 +21,12 @@ class WalletController extends Controller
         return response()->json([
             'total' => $nr_wallet
         ], 200);
+    }
+
+    public function getBalance($id){
+
+        $balance = DB::table('wallets')->select('balance')->where('id', $id)->get();
+        return $balance[0]->balance;
     }
 
     /**

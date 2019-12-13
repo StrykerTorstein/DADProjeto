@@ -45,6 +45,10 @@ Route::middleware('auth:api')->get('{id}/movements', 'MovementController@show');
 Route::middleware('auth:api')->post('{id}/movements', 'MovementController@filter');
 
 Route::get('categories/names/{type}','CategoryController@names');
+Route::get('categories/names','CategoryController@categoryName');
+Route::get('wallet/{id}/balance', 'WalletController@getBalance');
+
+
 
 /*
 Caso prefiram usar Resource Routes para o user, podem implementar antes as rotas:

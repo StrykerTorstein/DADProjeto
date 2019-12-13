@@ -87,4 +87,9 @@ class CategoryController extends Controller
         $names = Category::where('type', '=', $type)->pluck('name');
         return $names;
     }
+
+    public function all(){
+        $categories = Category::all()->pluck('name','id');
+        return json_encode($categories);
+    }
 }

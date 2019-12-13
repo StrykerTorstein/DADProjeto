@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use App\Http\Resources\Wallet as WalletResource; 
 use App\Http\Resources\Movement as MovementResource; 
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 
 
@@ -49,11 +51,60 @@ class MovementController extends Controller
         $user = Auth::guard('api')->user();
         //dd($user -> wallet());
         
-        $movements = $user->movements()->orderBy('date', 'desc')->paginate(20);
+        $movements = $user->movements()->orderBy('date', 'desc')->paginate(5);
 
         return MovementResource::collection($movements);
         //return Movement::where("wallet_id", $id)->orderBy('date', 'desc')->paginate(10);
 
+    }
+
+    public function filter(Request $request){
+        //$movements = DB::table('movements');
+        $user = Auth::guard('api')->user();
+        
+        $movements = $user->movements();
+        $wallet = $user->wallet();
+        $filteredMovementsId = [];
+        $filteredMovementsType = [];
+        $filteredMovementsDate = [];
+        //array_push($filteredMovements, $targetMovements);
+
+        if($request->has("id") && !empty($request->id)){
+            $m = $movements->where('id', '=', $request->id)->get();
+            array_push($filteredMovementsId, $m);
+        }
+        
+        if(($request->has("type") && !empty($request->type))){
+            $m = $movements->where('type', '=', $request->type)->get();
+            array_push($filteredMovementsType, $m);
+        }
+        
+        if(($request->has("start_date")) && ($request->has("end_date"))){
+            $carbon = new Carbon($request->end_date);
+            $carbon->addDays(1);
+            $m = $movements->where([['date', '>=', $request->start_date], ['date', '<=', $carbon]])->orderBy('date', 'desc');
+            array_push($filteredMovementsDate, $m);
+            //where('date', '>=', $request->start_date)->where('date', '<=', $request->end_date)
+        }
+        dd($request->category);
+        if($request->has("category")){
+            $category = DB::table('categories')->select('id')->where('name', $request->category)->get();
+            $movements = $movements->where('category_id', $category[0]->id);
+        }
+        
+        if(($request->has("type_payment"))){
+            $movements->where('type_payment', '=', $request->type_payment)->orderBy('date', 'desc');
+        }
+        if($request->has("email") && !empty($request->email)){
+            //$transfer_email = DB::table('wallets')->select('id')->where('email', $request->transfer_email)->get();
+            $walletIds = Wallet::where('email','=',$request->email)->pluck('id');
+            if(count($walletIds) > 0){
+                $wallet->where('email', '=', $request->email)->orderBy('date', 'desc');
+            }
+        }
+        
+        return MovementResource::collection($movements->paginate(5));
+        
     }
 
     /**

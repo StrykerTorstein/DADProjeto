@@ -13,8 +13,8 @@
         <div class="jumbotron">
             <h2>Confirmar Logout</h2>
             <div class="form-group">
-                <a class="btn btn-primary" v-on:click.prevent="logout"
-                    >Logout</a
+                <v-btn color="primary" id="btn" v-on:click.prevent="logout"
+                    >Logout</v-btn
                 >
             </div>
         </div>
@@ -56,3 +56,9 @@ export default {
     }
 };
 </script>
+
+<style>
+    #btn{
+    color:black;
+    }
+</style>

@@ -2,11 +2,11 @@
   <div>
     <div class="jumbotron">
       <h1>{{ title }}</h1>
-      <h2>Number of virtual wallets our users have: {{number}}</h2>
+      <h2>Number of virtual wallets: {{number}}</h2>
     </div>
     <div>
-      <v-btn v-show="!this.$store.state.user" v-on:click.prevent="gotoLoginPage()">Login</v-btn>
-      <v-btn v-show="!this.$store.state.user" v-on:click.prevent="gotoRegisterPage()">Register</v-btn>
+      <v-btn color="primary" id="btn" v-show="!this.$store.state.user" v-on:click.prevent="gotoLoginPage()">Login</v-btn>
+      <v-btn color="primary" id="btn" v-show="!this.$store.state.user" v-on:click.prevent="gotoRegisterPage()">Register</v-btn>
     </div>
   </div>
 </template>
@@ -40,4 +40,7 @@ export default {
 </script>
 
 <style>
+  #btn{
+    color:black;
+  }
 </style>

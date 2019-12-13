@@ -6,6 +6,10 @@
     <div>
       <v-img v-if="photo" height="256px" width="256px" :src="photo"></v-img>
     </div>
+    <div v-if="this.$store.state.user.type == 'u'">
+      <!-- place operator component here -->
+      <user-register-expense/>
+    </div>
     <div v-if="this.$store.state.user.type == 'o'">
       <!-- place operator component here -->
       <operator-movement />
@@ -17,6 +21,7 @@
 
 <script>
 import operatorMovement from "./operatorMovement";
+import userRegisterExpense from "./userRegisterExpense";
 import userEdit from "./userEditProfile";
 import { request } from "http";
 export default {
@@ -39,7 +44,8 @@ export default {
   },
   components: {
     "operator-movement": operatorMovement,
-    "user-edit": userEdit
+    "user-edit": userEdit,
+    "user-register-expense": userRegisterExpense,
   },
   computed: {
     title() {

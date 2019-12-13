@@ -167,8 +167,6 @@ export default {
   props: ["users"],
   data: () => {
     return {
-      currentUser: null,
-      user: null,
       movements: { links: {}, meta: {} },
       movement: undefined,
       filter: {},
@@ -189,12 +187,8 @@ export default {
     movementDetails(movement) {
       this.movement = movement;
     },
-    deleteUser(user) {
-      this.currentUser = user;
-      this.$emit("delete-user", user);
-    },
     getMovements() {
-      axios.get("api/" + this.user.id + "/movements").then(response => {
+      axios.get("api/" + this.$store.state.user.id + "/movements").then(response => {
         this.movements = response.data;
       });
     },
@@ -208,14 +202,15 @@ export default {
     },
     getFilter: function() {
       axios
-        .post("api/" + this.user.id + "/movements", this.filter)
+        .post("api/" + this.$store.state.user.id + "/movements", this.filter)
         .then(response => {
           this.movements = response.data;
         });
     },
     getBalance: function() {
+      console.log(this.$store.state.user.id);
       axios
-        .get("api/wallet/" + this.user.id + "/balance")
+        .get("api/wallet/" + this.$store.state.user.id + "/balance")
         .then(response => {
           this.balance = response.data;
         })
@@ -233,7 +228,6 @@ export default {
     "movement-details": movementDetails
   },
   mounted() {
-    this.user = this.$store.state.user;
     this.getMovements();
     //this.getFilter();
     this.getBalance();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Wallet;
+use App\User;
 
 class WalletController extends Controller
 {
@@ -23,9 +24,9 @@ class WalletController extends Controller
     }
 
     public function getBalance($id){
-        $balance = Wallet::findOrFail($id)->pluck('balance')->first();
-        //$balance = DB::table('wallets')->select('balance')->where('id', $id)->get();
-        return $balance;
+        $user = User::findOrFail($id);
+        $wallet = Wallet::where('email','=',$user->email)->first();
+        return $wallet->balance;
     }
 
     /**
@@ -77,5 +78,10 @@ class WalletController extends Controller
         //$wallet = Wallet::where('email', '=', $email)->first();
         $wallet = Wallet::whereEmail($email)->first();
         return $wallet;
+    }
+
+    public function allEmails(){
+        $emails = Wallet::all()->pluck('email');
+        return $emails;
     }
 }

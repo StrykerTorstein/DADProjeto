@@ -55,7 +55,7 @@
           </div>
         </div>
       </div>
-      <v-btn class="btn btn-success" v-on:click.prevent="saveUserEdits()">Save</v-btn>
+      <v-btn class="btn btn-success" v-on:click.prevent="saveUserEdits()">Save and Logout</v-btn>
       <v-btn class="btn btn-danger" v-on:click.prevent="editUser = false">Cancel</v-btn>
     </div>
   </div>
@@ -79,7 +79,7 @@ export default {
   },
   watch: {
     editUser: function(n) {
-      if(n === true){
+      if (n === true) {
         this.newName = this.$store.state.user.name;
         this.newNif = this.$store.state.user.nif;
       }
@@ -108,7 +108,8 @@ export default {
       }
       if (this.$store.state.user.type == "u") {
         var nifvalid =
-          this.newNif !== null && (this.newNif >= 100000000 && this.newNif <= 999999999);
+          this.newNif !== null &&
+          (this.newNif >= 100000000 && this.newNif <= 999999999);
         if (!nifvalid) {
           this.$toasted.show("Invalid NIF (must be 9 digits long)", {
             type: "error"
@@ -145,10 +146,7 @@ export default {
             axios
               .post("api/users/" + this.$store.state.user.id, formData)
               .then(response => {
-                var user = response.data.data;
-                this.$store.commit("setUser", user);
-                this.newNif = user.nif;
-                this.newName = user.name;
+                this.logout();
               })
               .catch(function(error) {
                 this.$toasted.show("Error updating user.", { type: "error" });
@@ -181,6 +179,28 @@ export default {
         reader.readAsDataURL(input.files[0]);
         this.newPhotoFile = input.files[0];
       }
+    },
+    logout() {
+      this.showMessage = false;
+      //Todo implement sockets
+      this.$socket.emit("logout", this.$store.state.user);
+      axios
+        .post("api/logout")
+        .then(response => {
+          this.$store.commit("clearUserAndToken");
+          this.typeofmsg = "alert-success";
+          this.message = "User has logged out correctly";
+          this.showMessage = true;
+          this.$router.push({ path: "/welcome" });
+        })
+        .catch(error => {
+          this.$store.commit("clearUserAndToken");
+          this.typeofmsg = "alert-danger";
+          this.message =
+            "Logout incorrect. But local credentials were discarded";
+          this.showMessage = true;
+          console.log(error);
+        });
     }
   }
 };

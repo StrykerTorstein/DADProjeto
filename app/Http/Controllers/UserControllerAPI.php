@@ -9,6 +9,7 @@ use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
 
 use App\User;
+use App\Wallet;
 use App\StoreUserRequest;
 use Hash;
 
@@ -38,22 +39,29 @@ class UserControllerAPI extends Controller
     public function store(Request $request)
     {
         $request->validate([
-                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'min:3',
-                'nif' => 'min:9'
-            ]);
+            'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'min:3',
+            'nif' => 'min:9'
+        ]);
+        if($request->photo != null && $request->hasFile('photo')){
+            $request->validate(['photo' => 'file|image|mimes:jpeg,bmp,png,jpg']);
+        }
+
         $user = new User();
         $user->fill($request->all());
+        $user->type = 'u';
         //$user->password = Hash::make($user->password); //cannot use this: 'password' is not in the 'fillable'
         $user->password = bcrypt($request->password);
-
-        if($request->hasFile('photo')){
+        dd($user->photo);
+        if($request->photo != null && $request->hasFile('photo')){
             //setPhoto($user,$request->photo);
             $file = $request->photo;
             $fileNew = \Storage::putFile('public/fotos', $file);
             $filename = basename($fileNew);
             $user->photo = $filename;
+        }else{
+            $user->photo = null;
         }
 
         //savePhoto($user,$request->photoFile);
@@ -67,31 +75,61 @@ class UserControllerAPI extends Controller
         */
 
         $user->save();
-        return response()->json(new UserResource($user), 201);
-    }
+        $wallet = new Wallet();
+        $wallet->id = $user->id;
+        $wallet->email = $user->email;
+        $wallet->balance = 0;
+        $wallet->save();
 
-    public function setPhoto($user, $file)
-    {
-        //$targetDir = storage_path('app/fotos');
-        //$newfilename = $user->id . "_" . uniqid(). '.jpg';
-        //File::copy( $file, $targetDir.'/'.$newfilename);
-        //$user->photo = $newfilename;
-        
-        $fileNew = \Storage::putFile('fotos', $file);
-        $filename = basename($fileNew);
-        $user->photo = $filename;
+        return response()->json(new UserResource($user), 201);
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
                 'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
-                'email' => 'required|email|unique:users,email,'.$id,
+                'password' => 'min:3',
                 'nif' => 'min:9'
             ]);
         $user = User::findOrFail($id);
-        $user->update($request->all());
+        
+        if($request->photo != null && $request->hasFile('photo')){
+            $request->validate(['photo' => 'file|image|mimes:jpeg,bmp,png,jpg']);
+        }
+
+        $userHasPhoto = $user->photo != null;
+
+        if($request->photo != null && $request->hasFile('photo')){
+            if($userHasPhoto){
+                $oldPhotoName = $user->photo;
+                $file = $request->photo;
+                //Parse 3rd parameter as the current filname
+                $fileNew = \Storage::putFileAs('public/fotos', $file, $oldPhotoName);
+                $filename = basename($fileNew);
+                $user->photo = $filename;
+            }else{
+                //Create a new one
+                $file = $request->photo;
+                $fileNew = \Storage::putFile('public/fotos', $file);
+                $filename = basename($fileNew);
+                $user->photo = $filename;
+            }
+            $request->photo = null;
+        }
+        if($user->type == 'u'){
+            $user->nif = $request->nif;
+        }
+        $user->name = $request->name;
+        $user->password = bcrypt($request->password);
+        $user->update();
+
+
         return new UserResource($user);
+    }
+
+    public function getPhotoByEmail($email){
+        $photo = User::where('email', '=', $email)->pluck('photo');
+        return $photo;
     }
 
     public function destroy($id)
@@ -100,6 +138,7 @@ class UserControllerAPI extends Controller
         $user->delete();
         return response()->json(null, 204);
     }
+
     public function emailAvailable(Request $request)
     {
         $totalEmail = 1;
@@ -116,5 +155,11 @@ class UserControllerAPI extends Controller
             $totalEmail = User::where('email', '=', $request->email)->count();
         }
         return response()->json($totalEmail == 0);
+    }
+
+    public function checkNewPassword(Request $request){
+        $passwordDb = User::where('id', '=', $request->userid)->pluck('password')->first();
+        $same = password_verify($request->newPassword, $passwordDb);
+        return $same ? "true" : "false";
     }
 }

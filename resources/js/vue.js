@@ -57,20 +57,20 @@ Vue.use(Toasted, {
 });
 
 const routes = [
-    {path:'/',redirect:'/welcome'},
-    {path:'/welcome',component:Welcome, name: "welcome"},
-    {path:'/register',component:Register, name: "register"},
-    {path:'/dashboard', component:Dashboard, name: "dashboard"},
-    {path:'/users',component:Users},
-    {path:'/game',component:TicTacToe},
-    {path:'/movements',component:Movement, name: "movements"},
-    {path:'/chat', component: Chat, name: "chat"},
-    {path:'/login', component: Login, name: "login"},
-    {path:'/logout', component: Logout, name: "logout"}
+    { path: '/', redirect: '/welcome' },
+    { path: '/welcome', component: Welcome, name: "welcome" },
+    { path: '/register', component: Register, name: "register" },
+    { path: '/dashboard', component: Dashboard, name: "dashboard" },
+    { path: '/users', component: Users },
+    { path: '/game', component: TicTacToe },
+    { path: '/movements', component: Movement, name: "movements" },
+    { path: '/chat', component: Chat, name: "chat" },
+    { path: '/login', component: Login, name: "login" },
+    { path: '/logout', component: Logout, name: "logout" }
 ]
 
 const router = new VueRouter({
-    routes:routes
+    routes: routes
 });
 
 router.beforeEach((to, from, next) => {
@@ -81,7 +81,8 @@ router.beforeEach((to, from, next) => {
         }
     }
     if (to.name == "logout") {
-        if (!store.state.user) {vuetify
+        if (!store.state.user) {
+            vuetify
             next("/login");
             return;
         }
@@ -94,19 +95,19 @@ const app = new Vue({
     router,
     vuetify,
     data: {
-        
+
     },
     created() {
         this.$store.commit("loadTokenAndUserFromSession");
-        if(this.$store.state.user){
-            this.$socket.emit('login',this.$store.state.user);
+        if (this.$store.state.user) {
+            this.$socket.emit('login', this.$store.state.user);
         }
     },
     methods: {
-        
+
     },
     mounted() {
-        
+
     },
     sockets: {
         //globally used socket methods
@@ -117,5 +118,9 @@ const app = new Vue({
             //dataFromServer[1].name + '"');
         }
         */
+        movementReceived(dataFromServer) {
+            console.log(dataFromServer);
+            this.$toasted.success(`New Movement`);
+        }
     },
 }).$mount("#app");

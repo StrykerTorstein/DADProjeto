@@ -31,6 +31,9 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('users/checkNewPassword','UserControllerAPI@checkNewPassword');
     Route::get('categories/all','CategoryController@all');
     Route::post('movements/show/{id}', 'MovementController@show');
+    Route::get('wallets/allemails', 'WalletController@allEmails');
+    Route::post('movements/expense/external','MovementController@expenseExternal');
+    Route::post('movements/expense/transfer','MovementController@expenseTranfer');
 });
 
 Route::get('wallets/exists/{email}', 'WalletController@exists');

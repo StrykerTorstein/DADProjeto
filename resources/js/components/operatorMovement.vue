@@ -146,8 +146,6 @@ export default {
               categoryName: movementCategoryTypeName,
               transfer: 0
             };
-            //console.log("Posting Movement:");
-            //console.log(movement);
             axios
               .post("api/movements/payment", movement)
               .then(response => {

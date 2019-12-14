@@ -30999,7 +30999,7 @@ var render = function() {
               on: {
                 click: function($event) {
                   $event.preventDefault()
-                  return _vm.getMovementsPages(_vm.movements.links.prev)
+                  return _vm.getMovements(_vm.movements.links.prev)
                 }
               }
             },
@@ -31015,7 +31015,7 @@ var render = function() {
               on: {
                 click: function($event) {
                   $event.preventDefault()
-                  return _vm.getMovementsPages(_vm.movements.links.next)
+                  return _vm.getMovements(_vm.movements.links.next)
                 }
               }
             },

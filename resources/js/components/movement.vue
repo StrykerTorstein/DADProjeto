@@ -102,8 +102,8 @@
     </div> 
   <div>
   </div>
-    <v-btn v-if="movements.links.prev" small color="primary" id="btn" v-on:click.prevent="getMovementsPages(movements.links.prev)">Previous</v-btn>
-    <v-btn v-if="movements.links.next" small color="primary" id="btn" v-on:click.prevent="getMovementsPages(movements.links.next)">Next</v-btn>
+    <v-btn v-if="movements.links.prev" small color="primary" id="btn" v-on:click.prevent="getMovements(movements.links.prev)">Previous</v-btn>
+    <v-btn v-if="movements.links.next" small color="primary" id="btn" v-on:click.prevent="getMovements(movements.links.next)">Next</v-btn>
   </div>
 </template>
 

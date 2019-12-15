@@ -2602,6 +2602,62 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["users"],
@@ -2609,10 +2665,8 @@ __webpack_require__.r(__webpack_exports__);
     return {
       currentUser: null,
       user: null,
-      movements: {
-        links: {},
-        meta: {}
-      },
+      movements: [],
+      meta: {},
       movement: undefined,
       filter: {},
       movementTypes: {
@@ -2635,32 +2689,43 @@ __webpack_require__.r(__webpack_exports__);
       this.currentUser = user;
       this.$emit("delete-user", user);
     },
-    getMovements: function getMovements() {
+    getMovements: function getMovements(page) {
       var _this = this;
 
-      axios.get("api/" + this.user.id + "/movements").then(function (response) {
-        _this.movements = response.data; //console.log(this.movements);
+      console.log("Fetching page: " + page);
+      var params = Object.assign({}, this.filter);
+
+      if (page) {
+        params.page = page;
+      }
+
+      for (var key in params) {
+        if (params[key] == "") params[key] = null;
+      }
+
+      console.log(params);
+      axios.get("api/" + this.user.id + "/movements", {
+        params: params
+      }).then(function (response) {
+        _this.movements = response.data.data;
+        _this.meta = response.data.meta;
       });
     },
-    getMovementsPages: function getMovementsPages(url) {
-      var _this2 = this;
-
-      axios.post(url, this.filter).then(function (response) {
-        _this2.movements = response.data;
-      });
+    getNextPage: function getNextPage() {
+      this.getMovements(this.meta.current_page + 1);
     },
-    getFilter: function getFilter() {
-      var _this3 = this;
-
-      axios.post("api/" + this.user.id + "/movements", this.filter).then(function (response) {
-        _this3.movements = response.data;
-      });
+    getPreviousPage: function getPreviousPage() {
+      this.getMovements(this.meta.current_page - 1);
+    },
+    clearFilters: function clearFilters() {
+      this.filter = {};
+      this.getMovements();
     },
     getBalance: function getBalance() {
-      var _this4 = this;
+      var _this2 = this;
 
-      axios.get('api/wallet/' + this.user.id + '/balance').then(function (response) {
-        _this4.balance = response.data;
+      axios.get("api/wallet/" + this.user.id + "/balance").then(function (response) {
+        _this2.balance = response.data;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2673,7 +2738,6 @@ __webpack_require__.r(__webpack_exports__);
     this.$store.commit("loadTokenAndUserFromSession");
     this.user = this.$store.state.user;
     this.getMovements();
-    this.getFilter();
     this.getBalance();
   },
   sockets: {
@@ -5603,7 +5667,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n#btn{\n  color:black;\n  margin-bottom: 20px;\n  margin-right: 20px;\n}\n", ""]);
+exports.push([module.i, "\n#btn {\n  color: black;\n  margin-bottom: 20px;\n  margin-right: 20px;\n}\n", ""]);
 
 // exports
 
@@ -30615,14 +30679,14 @@ var render = function() {
                 },
                 [
                   _c("option", { attrs: { value: "", selected: "" } }, [
-                    _vm._v(" -- Type -- ")
+                    _vm._v("-- Type --")
                   ]),
                   _vm._v(" "),
                   _vm._l(_vm.movementTypes, function(item, key) {
                     return _c(
                       "option",
                       { key: key, domProps: { value: key } },
-                      [_vm._v(" " + _vm._s(item) + " ")]
+                      [_vm._v(_vm._s(item))]
                     )
                   })
                 ],
@@ -30644,8 +30708,8 @@ var render = function() {
                     {
                       name: "model",
                       rawName: "v-model",
-                      value: _vm.movements.category_id,
-                      expression: "movements.category_id"
+                      value: _vm.filter.category_id,
+                      expression: "filter.category_id"
                     }
                   ],
                   staticClass: "form-control",
@@ -30661,7 +30725,7 @@ var render = function() {
                           return val
                         })
                       _vm.$set(
-                        _vm.movements,
+                        _vm.filter,
                         "category_id",
                         $event.target.multiple
                           ? $$selectedVal
@@ -30672,14 +30736,14 @@ var render = function() {
                 },
                 [
                   _c("option", { attrs: { value: "", selected: "" } }, [
-                    _vm._v(" -- Category -- ")
+                    _vm._v("-- Category --")
                   ]),
                   _vm._v(" "),
                   _vm._l(_vm.movements, function(item) {
                     return _c(
                       "option",
                       { key: item.id, domProps: { value: item.name } },
-                      [_vm._v(" " + _vm._s(item.name) + " ")]
+                      [_vm._v(_vm._s(item.name))]
                     )
                   })
                 ],
@@ -30787,14 +30851,14 @@ var render = function() {
                 },
                 [
                   _c("option", { attrs: { value: "", selected: "" } }, [
-                    _vm._v(" -- Type Of Payment -- ")
+                    _vm._v("-- Type Of Payment --")
                   ]),
                   _vm._v(" "),
                   _vm._l(_vm.movementTypesOfPayment, function(item, key) {
                     return _c(
                       "option",
                       { key: key, domProps: { value: key } },
-                      [_vm._v(" " + _vm._s(item) + " ")]
+                      [_vm._v(_vm._s(item))]
                     )
                   })
                 ],
@@ -30843,7 +30907,7 @@ var render = function() {
               on: {
                 click: function($event) {
                   $event.preventDefault()
-                  return _vm.getFilter()
+                  return _vm.getMovements()
                 }
               }
             },
@@ -30857,7 +30921,7 @@ var render = function() {
               on: {
                 click: function($event) {
                   $event.preventDefault()
-                  return _vm.getMovements()
+                  return _vm.clearFilters()
                 }
               }
             },
@@ -30934,7 +30998,7 @@ var render = function() {
         _vm._v(" "),
         _c(
           "tbody",
-          _vm._l(_vm.movements.data, function(movement) {
+          _vm._l(_vm.movements, function(movement) {
             return _c("tr", { key: movement.id }, [
               _c("th", [_vm._v(_vm._s(movement.id))]),
               _vm._v(" "),
@@ -30991,7 +31055,7 @@ var render = function() {
       _vm._v(" "),
       _c("div"),
       _vm._v(" "),
-      _vm.movements.links.prev
+      _vm.meta.current_page - 1 > 0
         ? _c(
             "v-btn",
             {
@@ -30999,7 +31063,7 @@ var render = function() {
               on: {
                 click: function($event) {
                   $event.preventDefault()
-                  return _vm.getMovements(_vm.movements.links.prev)
+                  return _vm.getPreviousPage()
                 }
               }
             },
@@ -31007,7 +31071,7 @@ var render = function() {
           )
         : _vm._e(),
       _vm._v(" "),
-      _vm.movements.links.next
+      _vm.meta.current_page + 1 <= _vm.meta.last_page
         ? _c(
             "v-btn",
             {
@@ -31015,7 +31079,7 @@ var render = function() {
               on: {
                 click: function($event) {
                   $event.preventDefault()
-                  return _vm.getMovements(_vm.movements.links.next)
+                  return _vm.getNextPage()
                 }
               }
             },

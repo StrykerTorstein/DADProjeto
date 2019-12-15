@@ -58,12 +58,18 @@ class MovementController extends Controller
 
     }
 
-    public function filter(Request $request){
+    public function filter(Request $request, $id){
 
         //$movements = DB::table('movements');
 
-        $user = Auth::guard('api')->user();
+        $authenticatedUser = Auth::guard('api')->user();
+
+        if ($id != $authenticatedUser->id) {
+            return abort(401);
+        }
         
+        $user = User::whereId($id)->first();
+        //dd($user);
         $movements = $user->movements();
         $wallet = $user->wallet();
 

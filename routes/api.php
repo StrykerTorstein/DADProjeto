@@ -40,9 +40,9 @@ Route::get('wallets/count', 'WalletController@count');
 Route::post('login', 'LoginControllerAPI@login');
 Route::middleware('auth:api')->post('logout','LoginControllerAPI@logout');
 
-Route::middleware('auth:api')->get('{id}/movements', 'MovementController@show');
+//Route::middleware('auth:api')->get('{id}/movements', 'MovementController@show');
 
-Route::middleware('auth:api')->post('{id}/movements', 'MovementController@filter');
+Route::middleware('auth:api')->get('{id}/movements', 'MovementController@filter');
 
 Route::get('categories/names/{type}','CategoryController@names');
 Route::get('categories/names','CategoryController@categoryName');

@@ -65,7 +65,7 @@
                 v-for="(item, key) in movementTypesOfPayment"
                 v-bind:key="key"
                 :value="key"
-              >{{item}}</option>
+              >{{getTitleForTypePayment(item)}}</option>
             </select>
           </div>
         </div>
@@ -120,7 +120,7 @@
         <tr v-for="movement in movements" :key="movement.id">
           <th>{{movement.id}}</th>
           <th>{{getTitleForType(movement.type)}}</th>
-          <th>{{movement.type_payment}}</th>
+          <th>{{getTitleForTypePayment(movement.type_payment)}}</th>
           <th>{{movement.email}}</th>
           <th>{{movement.category}}</th>
           <th>{{movement.date}}</th>
@@ -245,6 +245,13 @@ export default {
       if (type == "e") return "Expense";
       if (type == "i") return "Income";
       return type;
+    },
+    getTitleForTypePayment(type_payment) {
+      if (type_payment == "c") return "Cash";
+      if (type_payment == "bt") return "Bank Transfer";
+      if (type_payment == "mb") return "MB Payment";
+
+      return type_payment;
     }
   },
   components: {

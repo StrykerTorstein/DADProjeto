@@ -2742,6 +2742,12 @@ __webpack_require__.r(__webpack_exports__);
       if (type == "e") return "Expense";
       if (type == "i") return "Income";
       return type;
+    },
+    getTitleForTypePayment: function getTitleForTypePayment(type_payment) {
+      if (type_payment == "c") return "Cash";
+      if (type_payment == "bt") return "Bank Transfer";
+      if (type_payment == "mb") return "MB Payment";
+      return type_payment;
     }
   },
   components: {
@@ -30886,7 +30892,7 @@ var render = function() {
                     return _c(
                       "option",
                       { key: key, domProps: { value: key } },
-                      [_vm._v(_vm._s(item))]
+                      [_vm._v(_vm._s(_vm.getTitleForTypePayment(item)))]
                     )
                   })
                 ],
@@ -31032,7 +31038,11 @@ var render = function() {
               _vm._v(" "),
               _c("th", [_vm._v(_vm._s(_vm.getTitleForType(movement.type)))]),
               _vm._v(" "),
-              _c("th", [_vm._v(_vm._s(movement.type_payment))]),
+              _c("th", [
+                _vm._v(
+                  _vm._s(_vm.getTitleForTypePayment(movement.type_payment))
+                )
+              ]),
               _vm._v(" "),
               _c("th", [_vm._v(_vm._s(movement.email))]),
               _vm._v(" "),

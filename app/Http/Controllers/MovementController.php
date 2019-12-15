@@ -58,6 +58,11 @@ class MovementController extends Controller
 
     }
 
+    public function types(){
+        $types = Movement::distinct('type')->pluck('type');
+        return $types;
+    }
+
     public function filter(Request $request, $id){
 
         //$movements = DB::table('movements');
@@ -87,12 +92,12 @@ class MovementController extends Controller
             $movements->where([['date', '>=', $request->start_date], ['date', '<=', $carbon]])->orderBy('date', 'desc');
             //where('date', '>=', $request->start_date)->where('date', '<=', $request->end_date)
         }
-/*
+
         if(($request->has("category"))){
             $category = DB::table('categories')->select('id')->where('name', $request->category)->get();
             $movements = $movements->where('category_id', $category[0]->id);
         }
-*/
+
         if(($request->has("type_payment"))){
             $movements->where('type_payment', '=', $request->type_payment)->orderBy('date', 'desc');
         }

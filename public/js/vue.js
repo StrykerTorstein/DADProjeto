@@ -2654,10 +2654,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["users"],
@@ -2669,16 +2665,14 @@ __webpack_require__.r(__webpack_exports__);
       meta: {},
       movement: undefined,
       filter: {},
-      movementTypes: {
-        e: "Expense",
-        i: "Income"
-      },
+      movementTypes: {},
       movementTypesOfPayment: {
         c: "Cash",
         bt: "Bank Transfer",
         mb: "MB Payment"
       },
-      balance: ""
+      balance: "",
+      allCategories: {}
     };
   },
   methods: {
@@ -2729,6 +2723,25 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (error) {
         console.log(error);
       });
+    },
+    getCategories: function getCategories(type) {
+      var _this3 = this;
+
+      axios.get("api/categories/names").then(function (response) {
+        _this3.allCategories = response.data;
+      });
+    },
+    getTypes: function getTypes() {
+      var _this4 = this;
+
+      axios.get("api/movements/types").then(function (response) {
+        _this4.movementTypes = response.data;
+      });
+    },
+    getTitleForType: function getTitleForType(type) {
+      if (type == "e") return "Expense";
+      if (type == "i") return "Income";
+      return type;
     }
   },
   components: {
@@ -2739,6 +2752,21 @@ __webpack_require__.r(__webpack_exports__);
     this.user = this.$store.state.user;
     this.getMovements();
     this.getBalance();
+    this.getCategories();
+    this.getTypes();
+  },
+  computed: {
+    categoryList: function categoryList() {
+      var _this5 = this;
+
+      console.log("computing categories for" + this.filter.type); // If there is not type selected return an empty array
+
+      if (!this.filter.type) return []; //In case there is a type selected, return the categories for that type
+
+      return this.allCategories.filter(function (category) {
+        return category.type == _this5.filter.type;
+      });
+    }
   },
   sockets: {
     movementReceived: function movementReceived(dataFromServer) {
@@ -24799,7 +24827,7 @@ util.inherits = __webpack_require__(/*! inherits */ "./node_modules/inherits/inh
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(/*! util */ 2);
+var debugUtil = __webpack_require__(/*! util */ 1);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -26688,7 +26716,7 @@ Writable.prototype._destroy = function (err, cb) {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Buffer = __webpack_require__(/*! safe-buffer */ "./node_modules/safe-buffer/index.js").Buffer;
-var util = __webpack_require__(/*! util */ 3);
+var util = __webpack_require__(/*! util */ 2);
 
 function copyBuffer(src, target, offset) {
   src.copy(target, offset);
@@ -30682,11 +30710,11 @@ var render = function() {
                     _vm._v("-- Type --")
                   ]),
                   _vm._v(" "),
-                  _vm._l(_vm.movementTypes, function(item, key) {
+                  _vm._l(_vm.movementTypes, function(item) {
                     return _c(
                       "option",
-                      { key: key, domProps: { value: key } },
-                      [_vm._v(_vm._s(item))]
+                      { key: item, domProps: { value: item } },
+                      [_vm._v(_vm._s(_vm.getTitleForType(item)))]
                     )
                   })
                 ],
@@ -30696,60 +30724,60 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "col-md-3" }, [
-            _c("div", { staticClass: "form-group" }, [
-              _c("label", { attrs: { for: "category_id" } }, [
-                _vm._v("Category")
-              ]),
-              _vm._v(" "),
-              _c(
-                "select",
-                {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.filter.category_id,
-                      expression: "filter.category_id"
-                    }
-                  ],
-                  staticClass: "form-control",
-                  attrs: { id: "name", name: "name" },
-                  on: {
-                    change: function($event) {
-                      var $$selectedVal = Array.prototype.filter
-                        .call($event.target.options, function(o) {
-                          return o.selected
-                        })
-                        .map(function(o) {
-                          var val = "_value" in o ? o._value : o.value
-                          return val
-                        })
-                      _vm.$set(
-                        _vm.filter,
-                        "category_id",
-                        $event.target.multiple
-                          ? $$selectedVal
-                          : $$selectedVal[0]
-                      )
-                    }
-                  }
-                },
-                [
-                  _c("option", { attrs: { value: "", selected: "" } }, [
-                    _vm._v("-- Category --")
+            _vm.categoryList.length > 0
+              ? _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "category_id" } }, [
+                    _vm._v("Category")
                   ]),
                   _vm._v(" "),
-                  _vm._l(_vm.movements, function(item) {
-                    return _c(
-                      "option",
-                      { key: item.id, domProps: { value: item.name } },
-                      [_vm._v(_vm._s(item.name))]
-                    )
-                  })
-                ],
-                2
-              )
-            ])
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.filter.category,
+                          expression: "filter.category"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { id: "name", name: "name" },
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.filter,
+                            "category",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
+                      }
+                    },
+                    [
+                      _c("option", { attrs: { value: "", selected: "" } }, [
+                        _vm._v("-- Category --")
+                      ]),
+                      _vm._v(" "),
+                      _vm._l(_vm.categoryList, function(item) {
+                        return _c("option", { key: item.id }, [
+                          _vm._v(_vm._s(item.name))
+                        ])
+                      })
+                    ],
+                    2
+                  )
+                ])
+              : _vm._e()
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "col-md-3" }, [
@@ -31002,7 +31030,7 @@ var render = function() {
             return _c("tr", { key: movement.id }, [
               _c("th", [_vm._v(_vm._s(movement.id))]),
               _vm._v(" "),
-              _c("th", [_vm._v(_vm._s(movement.type))]),
+              _c("th", [_vm._v(_vm._s(_vm.getTitleForType(movement.type)))]),
               _vm._v(" "),
               _c("th", [_vm._v(_vm._s(movement.type_payment))]),
               _vm._v(" "),
@@ -86703,7 +86731,7 @@ module.exports = __webpack_require__(/*! /Users/catarina/Documents/DAD/DADProjet
 
 /***/ }),
 
-/***/ 2:
+/***/ 1:
 /*!**********************!*\
   !*** util (ignored) ***!
   \**********************/
@@ -86714,7 +86742,7 @@ module.exports = __webpack_require__(/*! /Users/catarina/Documents/DAD/DADProjet
 
 /***/ }),
 
-/***/ 3:
+/***/ 2:
 /*!**********************!*\
   !*** util (ignored) ***!
   \**********************/

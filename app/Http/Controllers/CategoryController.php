@@ -90,6 +90,8 @@ class CategoryController extends Controller
     }
 
     public function categoryName(){
-        return CategoryResource::Collection(Category::all());
+        $categories= Category::distinct('name')->get();
+
+        return $categories;
     }
 }

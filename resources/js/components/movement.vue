@@ -19,20 +19,16 @@
             <label for="movement_id">Type</label>
             <select class="form-control" v-model="filter.type">
               <option value selected>-- Type --</option>
-              <option v-for="(item, key) in movementTypes" v-bind:key="key" :value="key">{{item}}</option>
+              <option v-for="item in movementTypes" :value="item" :key="item">{{getTitleForType(item)}}</option>
             </select>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="form-group">
+          <div v-if="categoryList.length > 0" class="form-group">
             <label for="category_id">Category</label>
-            <select class="form-control" id="name" name="name" v-model="filter.category_id">
+            <select class="form-control" id="name" name="name" v-model="filter.category">
               <option value selected>-- Category --</option>
-              <option
-                v-for="item in movements"
-                :key="item.id"
-                v-bind:value="item.name"
-              >{{ item.name }}</option>
+              <option v-for="item in categoryList" :key="item.id">{{ item.name }}</option>
             </select>
           </div>
         </div>
@@ -123,7 +119,7 @@
       <tbody>
         <tr v-for="movement in movements" :key="movement.id">
           <th>{{movement.id}}</th>
-          <th>{{movement.type}}</th>
+          <th>{{getTitleForType(movement.type)}}</th>
           <th>{{movement.type_payment}}</th>
           <th>{{movement.email}}</th>
           <th>{{movement.category}}</th>
@@ -175,16 +171,14 @@ export default {
       meta: {},
       movement: undefined,
       filter: {},
-      movementTypes: {
-        e: "Expense",
-        i: "Income"
-      },
+      movementTypes: {},
       movementTypesOfPayment: {
         c: "Cash",
         bt: "Bank Transfer",
         mb: "MB Payment"
       },
-      balance: ""
+      balance: "",
+      allCategories: {}
     };
   },
   methods: {
@@ -205,10 +199,10 @@ export default {
       }
 
       for (var key in params) {
-        if (params[key] == "") params[key] = null
+        if (params[key] == "") params[key] = null;
       }
 
-      console.log(params)
+      console.log(params);
 
       axios
         .get("api/" + this.user.id + "/movements", { params: params })
@@ -224,8 +218,8 @@ export default {
       this.getMovements(this.meta.current_page - 1);
     },
     clearFilters() {
-      this.filter = {}
-      this.getMovements()
+      this.filter = {};
+      this.getMovements();
     },
     getBalance: function() {
       axios
@@ -236,6 +230,21 @@ export default {
         .catch(error => {
           console.log(error);
         });
+    },
+    getCategories: function(type) {
+      axios.get("api/categories/names").then(response => {
+        this.allCategories = response.data;
+      });
+    },
+    getTypes: function() {
+      axios.get("api/movements/types").then(response => {
+        this.movementTypes = response.data;
+      });
+    },
+    getTitleForType(type) {
+      if (type == "e") return "Expense";
+      if (type == "i") return "Income";
+      return type;
     }
   },
   components: {
@@ -246,6 +255,21 @@ export default {
     this.user = this.$store.state.user;
     this.getMovements();
     this.getBalance();
+    this.getCategories();
+    this.getTypes();
+  },
+  computed: {
+    categoryList: function() {
+      console.log("computing categories for" + this.filter.type);
+
+      // If there is not type selected return an empty array
+      if (!this.filter.type) return [];
+
+      //In case there is a type selected, return the categories for that type
+      return this.allCategories.filter(
+        category => category.type == this.filter.type
+      );
+    }
   },
   sockets: {
     movementReceived(dataFromServer) {

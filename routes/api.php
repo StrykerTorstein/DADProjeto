@@ -48,6 +48,9 @@ Route::get('categories/names/{type}','CategoryController@names');
 Route::get('categories/names','CategoryController@categoryName');
 Route::get('wallet/{id}/balance', 'WalletController@getBalance');
 
+Route::get('categories/names','CategoryController@categoryName');
+
+Route::get('movements/types','MovementController@types');
 
 
 /*

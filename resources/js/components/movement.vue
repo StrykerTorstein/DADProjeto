@@ -16,9 +16,9 @@
         <div class="col-md-3">
           <div class="form-group">
             <label for="movement_id">Type</label>
-            <select class="form-control" v-model="filter.type">
-              <option value selected>-- Type --</option>
-              <option v-for="item in movementTypes" :value="item" :key="item">{{getTitleForType(item)}}</option>
+            <select class="form-control" v-model="selectedMovementType">
+              <option value selected>ALL</option>
+              <option v-for="item in movementTypes" :value="item" :key="item">{{getTitleForType(item).toUpperCase()}}</option>
             </select>
           </div>
         </div>
@@ -27,8 +27,8 @@
           <div v-if="categoryList && categoryList.length > 0" class="form-group">
             <label for="category_id">Category</label>
             <select class="form-control" id="name" name="name" v-model="filter.category">
-              <option value selected>-- Category --</option>
-              <option v-for="item in categoryList" :key="item.id">{{ item.name }}</option>
+              <option value selected>ALL</option>
+              <option v-for="item in categoryList" :key="item.id">{{ item.name.toUpperCase() }}</option>
             </select>
           </div>
         </div>
@@ -170,7 +170,7 @@ export default {
       movements: [],
       meta: {},
       movement: undefined,
-      filter: {},
+      filter: {type:'i'},
       movementTypes: {},
       movementTypesOfPayment: {
         c: "Cash",
@@ -179,7 +179,8 @@ export default {
       },
       balance: "",
       allCategories: {},
-      categoryList: null
+      categoryList: null,
+      selectedMovementType: null
     };
   },
   methods: {
@@ -191,8 +192,7 @@ export default {
       this.$emit("delete-user", user);
     },
     getMovements(page) {
-      console.log("Fetching page: " + page);
-
+      //console.log("Fetching page: " + page);
       let params = Object.assign({}, this.filter);
 
       if (page) {
@@ -203,7 +203,7 @@ export default {
         if (params[key] == "") params[key] = null;
       }
 
-      console.log(params);
+      //console.log(params);
 
       axios
         .get("api/" + this.$store.state.user.id + "/movements", { params: params })
@@ -282,6 +282,7 @@ export default {
     movementReceived(dataFromServer) {
       //console.log("Movement received!");
       this.getMovements();
+      this.getBalance();
       //let name = dataFromServer[1] === null ? 'Unknown' : dataFromServer[1].name;
       //this.$toasted.show('Message "' + dataFromServer[0]+ '" sent from "' + name + '"');
     }
@@ -299,6 +300,19 @@ export default {
             return this.movements.data;
           });
       }
+    }
+  },
+  watch:{
+    filter(){
+      this.categoryList = this.allCategories.filter(category => category.type == this.filter.type)
+    },
+    selectedMovementType(){
+      if(!this.selectedMovementType || this.selectedMovementType.length === 0){
+        this.selectedMovementType = null;
+      }
+      this.filter.type = this.selectedMovementType;
+      this.categoryList = this.allCategories.filter( category => category.type == this.filter.type );
+      //filter.category = this.categoryList[1];
     }
   }
 };

@@ -78,21 +78,18 @@ class MovementController extends Controller
         $movements = $user->movements();
         $wallet = $user->wallet();
 
-        if($request->has("id") && !empty($request->id)){
-            $m = $movements->where('id', '=', $request->id)->get();
-            array_push($filteredMovementsId, $m);
+        if(($request->has("id"))){
+            $movements->where('id', '=', $request->id)->orderBy('date', 'desc');
         }
         
-        if(($request->has("type") && !empty($request->type))){
-            $m = $movements->where('type', '=', $request->type)->get();
-            array_push($filteredMovementsType, $m);
+        if(($request->has("type"))){
+            $movements->where('type', '=', $request->type)->orderBy('date', 'desc');
         }
-        
+
         if(($request->has("start_date")) && ($request->has("end_date"))){
             $carbon = new Carbon($request->end_date);
             $carbon->addDays(1);
-            $m = $movements->where([['date', '>=', $request->start_date], ['date', '<=', $carbon]])->orderBy('date', 'desc');
-            array_push($filteredMovementsDate, $m);
+            $movements->where([['date', '>=', $request->start_date], ['date', '<=', $carbon]])->orderBy('date', 'desc');
             //where('date', '>=', $request->start_date)->where('date', '<=', $request->end_date)
         }
 

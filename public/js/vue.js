@@ -2311,6 +2311,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _movementDetails__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./movementDetails */ "./resources/js/components/movementDetails.vue");
+var _props$data$methods$c;
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //
@@ -2475,7 +2477,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 
-/* harmony default export */ __webpack_exports__["default"] = (_defineProperty({
+/* harmony default export */ __webpack_exports__["default"] = (_props$data$methods$c = {
   props: ["users"],
   data: function data() {
     return {
@@ -2484,7 +2486,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       movements: [],
       meta: {},
       movement: undefined,
-      filter: {},
+      filter: {
+        type: 'i'
+      },
       movementTypes: {},
       movementTypesOfPayment: {
         c: "Cash",
@@ -2493,7 +2497,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       },
       balance: "",
       allCategories: {},
-      categoryList: null
+      categoryList: null,
+      selectedMovementType: null
     };
   },
   methods: {
@@ -2507,7 +2512,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     getMovements: function getMovements(page) {
       var _this = this;
 
-      console.log("Fetching page: " + page);
+      //console.log("Fetching page: " + page);
       var params = Object.assign({}, this.filter);
 
       if (page) {
@@ -2516,9 +2521,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       for (var key in params) {
         if (params[key] == "") params[key] = null;
-      }
+      } //console.log(params);
 
-      console.log(params);
+
       axios.get("api/" + this.$store.state.user.id + "/movements", {
         params: params
       }).then(function (response) {
@@ -2596,11 +2601,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   sockets: {
     movementReceived: function movementReceived(dataFromServer) {
       //console.log("Movement received!");
-      this.getMovements(); //let name = dataFromServer[1] === null ? 'Unknown' : dataFromServer[1].name;
+      this.getMovements();
+      this.getBalance(); //let name = dataFromServer[1] === null ? 'Unknown' : dataFromServer[1].name;
       //this.$toasted.show('Message "' + dataFromServer[0]+ '" sent from "' + name + '"');
     }
   }
-}, "computed", {
+}, _defineProperty(_props$data$methods$c, "computed", {
   allMovements: function allMovements() {
     var _this6 = this;
 
@@ -2614,7 +2620,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     }
   }
-}));
+}), _defineProperty(_props$data$methods$c, "watch", {
+  filter: function filter() {
+    var _this7 = this;
+
+    this.categoryList = this.allCategories.filter(function (category) {
+      return category.type == _this7.filter.type;
+    });
+  },
+  selectedMovementType: function selectedMovementType() {
+    var _this8 = this;
+
+    if (!this.selectedMovementType || this.selectedMovementType.length === 0) {
+      this.selectedMovementType = null;
+    }
+
+    this.filter.type = this.selectedMovementType;
+    this.categoryList = this.allCategories.filter(function (category) {
+      return category.type == _this8.filter.type;
+    }); //filter.category = this.categoryList[1];
+  }
+}), _props$data$methods$c);
 
 /***/ }),
 
@@ -31045,8 +31071,8 @@ var render = function() {
                     {
                       name: "model",
                       rawName: "v-model",
-                      value: _vm.filter.type,
-                      expression: "filter.type"
+                      value: _vm.selectedMovementType,
+                      expression: "selectedMovementType"
                     }
                   ],
                   staticClass: "form-control",
@@ -31060,26 +31086,22 @@ var render = function() {
                           var val = "_value" in o ? o._value : o.value
                           return val
                         })
-                      _vm.$set(
-                        _vm.filter,
-                        "type",
-                        $event.target.multiple
-                          ? $$selectedVal
-                          : $$selectedVal[0]
-                      )
+                      _vm.selectedMovementType = $event.target.multiple
+                        ? $$selectedVal
+                        : $$selectedVal[0]
                     }
                   }
                 },
                 [
                   _c("option", { attrs: { value: "", selected: "" } }, [
-                    _vm._v("-- Type --")
+                    _vm._v("ALL")
                   ]),
                   _vm._v(" "),
                   _vm._l(_vm.movementTypes, function(item) {
                     return _c(
                       "option",
                       { key: item, domProps: { value: item } },
-                      [_vm._v(_vm._s(_vm.getTitleForType(item)))]
+                      [_vm._v(_vm._s(_vm.getTitleForType(item).toUpperCase()))]
                     )
                   })
                 ],
@@ -31130,12 +31152,12 @@ var render = function() {
                     },
                     [
                       _c("option", { attrs: { value: "", selected: "" } }, [
-                        _vm._v("-- Category --")
+                        _vm._v("ALL")
                       ]),
                       _vm._v(" "),
                       _vm._l(_vm.categoryList, function(item) {
                         return _c("option", { key: item.id }, [
-                          _vm._v(_vm._s(item.name))
+                          _vm._v(_vm._s(item.name.toUpperCase()))
                         ])
                       })
                     ],

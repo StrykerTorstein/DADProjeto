@@ -18,16 +18,17 @@
             <label for="movement_id">Type</label>
             <select class="form-control" v-model="filter.type">
               <option value selected>-- Type --</option>
-              <option v-for="(item, key) in movementTypes" v-bind:key="key" :value="key">{{item}}</option>
+              <option v-for="item in movementTypes" :value="item" :key="item">{{getTitleForType(item)}}</option>
             </select>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="form-group">
+          <!-- problem , sometimes categoryList is null-->
+          <div v-if="categoryList && categoryList.length > 0" class="form-group">
             <label for="category_id">Category</label>
-            <select class="form-control" id="name" name="name" v-model="movements.category_id">
-              <option value selected>-- None --</option>
-              <option v-for="(item,key) in categories" v-bind:key="key" :value="key">{{item}}</option>
+            <select class="form-control" id="name" name="name" v-model="filter.category">
+              <option value selected>-- Category --</option>
+              <option v-for="item in categoryList" :key="item.id">{{ item.name }}</option>
             </select>
           </div>
         </div>
@@ -64,21 +65,21 @@
                 v-for="(item, key) in movementTypesOfPayment"
                 v-bind:key="key"
                 :value="key"
-              >{{item}}</option>
+              >{{getTitleForTypePayment(item)}}</option>
             </select>
           </div>
         </div>
         <div class="col-md-3">
           <div class="form-group">
             <label for="inputName">Email</label>
-            <input type="text" class="form-control" v-model="filter.email" />
+            <input type="email" class="form-control" v-model="filter.email" />
           </div>
         </div>
       </div>
     </div>
     <div>
-      <v-btn small color="primary" id="btn" v-on:click.prevent="getFilter()">Filter</v-btn>
-      <v-btn small color="primary" id="btn" v-on:click.prevent="getMovements()">Clear Filters</v-btn>
+      <v-btn small color="primary" id="btn" v-on:click.prevent="getMovements()">Filter</v-btn>
+      <v-btn small color="primary" id="btn" v-on:click.prevent="clearFilters()">Clear Filters</v-btn>
     </div>
     <table class="table table-striped">
       <thead>
@@ -116,10 +117,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="movement in allMovements" :key="movement.id">
+        <tr v-for="movement in movements" :key="movement.id">
           <th>{{movement.id}}</th>
-          <th>{{movement.type}}</th>
-          <th>{{movement.type_payment}}</th>
+          <th>{{getTitleForType(movement.type)}}</th>
+          <th>{{getTitleForTypePayment(movement.type_payment)}}</th>
           <th>{{movement.email}}</th>
           <th>{{movement.category}}</th>
           <th>{{movement.date}}</th>
@@ -140,24 +141,21 @@
     <div>
       <movement-details :movement="movement" v-if="movement"></movement-details>
     </div>
-    <div v-if="movements.links && movements.meta">
-      <!--
-      <v-btn
-        v-if="movements.meta.current_page > 1 && movements.links.prev"
-        small
-        color="primary"
-        id="btn"
-        v-on:click.prevent="getMovementsPages(movements.links.prev)"
-      >Previous</v-btn>
-      -->
-      <v-btn
-        v-if="movements.links.next"
-        small
-        color="primary"
-        id="btn"
-        v-on:click.prevent="getMovementsPages(movements.links.next)"
-      >Next</v-btn>
-    </div>
+    <div></div>
+    <v-btn
+      v-if="meta.current_page - 1 > 0"
+      small
+      color="primary"
+      id="btn"
+      v-on:click.prevent="getPreviousPage()"
+    >Previous</v-btn>
+    <v-btn
+      v-if="meta.current_page + 1 <= meta.last_page"
+      small
+      color="primary"
+      id="btn"
+      v-on:click.prevent="getNextPage()"
+    >Next</v-btn>
   </div>
 </template>
 
@@ -167,48 +165,65 @@ export default {
   props: ["users"],
   data: () => {
     return {
-      movements: { links: {}, meta: {} },
+      currentUser: null,
+      user: null,
+      movements: [],
+      meta: {},
       movement: undefined,
       filter: {},
-      movementTypes: {
-        e: "Expense",
-        i: "Income"
-      },
+      movementTypes: {},
       movementTypesOfPayment: {
         c: "Cash",
         bt: "Bank Transfer",
         mb: "MB Payment"
       },
       balance: "",
-      categories: {}
+      allCategories: {},
+      categoryList: null
     };
   },
   methods: {
     movementDetails(movement) {
       this.movement = movement;
     },
-    getMovements() {
-      axios.get("api/" + this.$store.state.user.id + "/movements").then(response => {
-        this.movements = response.data;
-      });
+    deleteUser(user) {
+      this.currentUser = user;
+      this.$emit("delete-user", user);
     },
-    getMovementsPages: function(url) {
-      //Problem is here...
-      console.log(url);
-      axios.post(url).then(response => {
-        this.movements = response.data;
-        console.log(response.data);
-      });
-    },
-    getFilter: function() {
+    getMovements(page) {
+      console.log("Fetching page: " + page);
+
+      let params = Object.assign({}, this.filter);
+
+      if (page) {
+        params.page = page;
+      }
+
+      for (var key in params) {
+        if (params[key] == "") params[key] = null;
+      }
+
+      console.log(params);
+
       axios
-        .post("api/" + this.$store.state.user.id + "/movements", this.filter)
+        .get("api/" + this.$store.state.user.id + "/movements", { params: params })
         .then(response => {
-          this.movements = response.data;
+          this.movements = response.data.data;
+          this.meta = response.data.meta;
         });
     },
+    getNextPage: function() {
+      
+      this.getMovements(this.meta.current_page + 1);
+    },
+    getPreviousPage: function() {
+      this.getMovements(this.meta.current_page - 1);
+    },
+    clearFilters() {
+      this.filter = {};
+      this.getMovements();
+    },
     getBalance: function() {
-      console.log(this.$store.state.user.id);
       axios
         .get("api/wallet/" + this.$store.state.user.id + "/balance")
         .then(response => {
@@ -218,10 +233,27 @@ export default {
           console.log(error);
         });
     },
-    setCategoryNames() {
-      axios.get("api/categories/all").then(response => {
-        this.categories = response.data;
+    getCategories: function(type) {
+      axios.get("api/categories/names").then(response => {
+        this.allCategories = response.data;
       });
+    },
+    getTypes: function() {
+      axios.get("api/movements/types").then(response => {
+        this.movementTypes = response.data;
+      });
+    },
+    getTitleForType(type) {
+      if (type == "e") return "Expense";
+      if (type == "i") return "Income";
+      return type;
+    },
+    getTitleForTypePayment(type_payment) {
+      if (type_payment == "c") return "Cash";
+      if (type_payment == "bt") return "Bank Transfer";
+      if (type_payment == "mb") return "MB Payment";
+
+      return type_payment;
     }
   },
   components: {
@@ -229,9 +261,22 @@ export default {
   },
   mounted() {
     this.getMovements();
-    //this.getFilter();
     this.getBalance();
-    this.setCategoryNames();
+    this.getCategories();
+    this.getTypes();
+  },
+  computed: {
+    categoryList: function() {
+      console.log("computing categories for" + this.filter.type);
+
+      // If there is not type selected return an empty array
+      if (!this.filter.type) return [];
+
+      //In case there is a type selected, return the categories for that type
+      return this.allCategories.filter(
+        category => category.type == this.filter.type
+      );
+    }
   },
   sockets: {
     movementReceived(dataFromServer) {

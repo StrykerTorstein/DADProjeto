@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Category;
+use App\Http\Resources\Category as CategoryResource;
 
 class CategoryController extends Controller
 {
@@ -88,8 +89,9 @@ class CategoryController extends Controller
         return $names;
     }
 
-    public function all(){
-        $categories = Category::all()->pluck('name','id');
-        return json_encode($categories);
+    public function categoryName(){
+        $categories= Category::distinct('name')->get();
+
+        return $categories;
     }
 }

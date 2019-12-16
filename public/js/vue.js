@@ -30915,7 +30915,7 @@ var render = function() {
                   }
                 ],
                 staticClass: "form-control",
-                attrs: { type: "text" },
+                attrs: { type: "email" },
                 domProps: { value: _vm.filter.email },
                 on: {
                   input: function($event) {

@@ -53,6 +53,7 @@ Route::get('categories/names','CategoryController@categoryName');
 Route::get('movements/types','MovementController@types');
 
 
+
 /*
 Caso prefiram usar Resource Routes para o user, podem implementar antes as rotas:
 NOTA: neste caso, o parâmetro a receber nos métodos do controlador é user e não id

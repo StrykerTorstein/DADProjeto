@@ -104,17 +104,11 @@ class MovementController extends Controller
 
         if(($request->has("email"))){
 
-            $transfer_email = DB::table('wallets')->select('id')->where('email', $request->transfer_email)->get();
-
-            if($transfer_email->isEmpty()){
-                return 'Transfer e-mail does not exist!';
-            }
-
-            $wallet->where('email', '=', $request->email)->orderBy('date', 'desc');
+            $email = DB::table('wallets')->select('id')->where('email', $request->email)->get();
+            $movements->where('transfer_wallet_id', $email[0]->id);
         }
-        
 
-        return MovementResource::collection($movements->paginate(5));
+        return MovementResource::collection($movements->orderBy('date', 'desc')->paginate(5));
         
     }
 

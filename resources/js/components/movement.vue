@@ -72,7 +72,7 @@
         <div class="col-md-3">
           <div class="form-group">
             <label for="inputName">Email</label>
-            <input type="text" class="form-control" v-model="filter.email" />
+            <input type="email" class="form-control" v-model="filter.email" />
           </div>
         </div>
       </div>
@@ -212,6 +212,7 @@ export default {
         });
     },
     getNextPage: function() {
+      
       this.getMovements(this.meta.current_page + 1);
     },
     getPreviousPage: function() {

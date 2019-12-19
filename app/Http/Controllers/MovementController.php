@@ -251,4 +251,10 @@ class MovementController extends Controller
         $response = json_encode($obj);
         return $response;
     }
+
+    public function getAllUserMovements(Request $request){
+        $wallet = Wallet::where('email','=',$request->email)->first();
+        $movements = Movement::where('wallet_id','=',$wallet->id)->get();
+        return $movements;
+    }
 }

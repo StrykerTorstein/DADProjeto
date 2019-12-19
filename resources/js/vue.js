@@ -20,6 +20,9 @@ window.Vue = require('vue');
 
 Vue.use(Vuex);
 
+import VueGoogleCharts from 'vue-google-charts';
+Vue.use(VueGoogleCharts);
+
 
 import VueRouter from 'vue-router';
 import Welcome from './components/welcome'
@@ -29,6 +32,8 @@ import Dashboard from './components/dashboard';
 import Register from './components/register';
 import Movement from './components/movement';
 import Chat from './components/chat';
+import MovementStatistics from './components/movementStatistics'
+import AdminStatistics from './components/adminStatistics'
 
 import LoginComponent from "./components/login.vue";
 import LogoutComponent from "./components/logout.vue";
@@ -64,7 +69,9 @@ const routes = [
     { path: '/users', component: Users },
     { path: '/game', component: TicTacToe },
     { path: '/movements', component: Movement, name: "movements" },
+    { path: '/movementStatistics', component: MovementStatistics, name: "movementStatistics" },
     { path: '/chat', component: Chat, name: "chat" },
+    { path: '/adminStatistics', component: AdminStatistics, name: "adminStatistics" },
     { path: '/login', component: Login, name: "login" },
     { path: '/logout', component: Logout, name: "logout" }
 ]

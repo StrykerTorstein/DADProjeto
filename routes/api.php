@@ -34,6 +34,7 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('wallets/allemails', 'WalletController@allEmails');
     Route::post('movements/expense/external','MovementController@expenseExternal');
     Route::post('movements/expense/transfer','MovementController@expenseTranfer');
+    Route::get('movements/getAllUserMovements','MovementController@getAllUserMovements');
 });
 
 Route::get('wallets/exists/{email}', 'WalletController@exists');

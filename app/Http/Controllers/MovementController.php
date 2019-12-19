@@ -254,7 +254,16 @@ class MovementController extends Controller
 
     public function getAllUserMovements(Request $request){
         $wallet = Wallet::where('email','=',$request->email)->first();
-        $movements = Movement::where('wallet_id','=',$wallet->id)->get();
+        $movements = Movement::where('wallet_id','=',$wallet->id)->orderBy('date','ASC')->get();
         return $movements;
+    }
+
+    public function updateMovementDescriptionAndCategory(Request $request,$id){
+        $movement = Movement::findOrFail($id);
+        $category = Category::where('name','=',strtolower($request->category))->get()->first();
+        $movement->category_id = $category->id;
+        $movement->description = $request->description;
+        $movement->save();
+        return $movement;
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Contracts\Support\Jsonable;
 
 use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth; 
 
 use App\User;
 use App\Wallet;
@@ -161,5 +162,15 @@ class UserControllerAPI extends Controller
         $passwordDb = User::where('id', '=', $request->userid)->pluck('password')->first();
         $same = password_verify($request->newPassword, $passwordDb);
         return $same ? "true" : "false";
+    }
+
+    public function all(){
+        $authenticatedUser = Auth::guard('api')->user();
+        if ($authenticatedUser == null || $authenticatedUser->type != "a") {
+            return abort(401);
+        }
+
+        $users = User::orderBy('created_at','ASC')->get();
+        return $users;
     }
 }

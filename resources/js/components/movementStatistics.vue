@@ -2,33 +2,45 @@
   <div>
     <div class="jumbotron">
       <h1>{{ title }}</h1>
+      <h2 v-if="movements">You have {{movements.length}} movements on record</h2>
     </div>
-    <div>
+    <div v-if="movements">
+      <h2>Balance</h2>
       <GChart
         type="LineChart"
         :data="lineChartMovementEndBalance.chartData"
         :options="lineChartMovementEndBalance.chartOptions"
       />
+      <h2>Incomes and Expenses</h2>
       <GChart
         type="PieChart"
         :data="pieChartIncomesAndExpenses.chartData"
         :options="pieChartIncomesAndExpenses.chartOptions"
       />
+      <h2>Transfers vs Non-Transfers</h2>
       <GChart
         type="PieChart"
         :data="pieChartTransfers.chartData"
         :options="pieChartTransfers.chartOptions"
       />
+      <h2>Categories</h2>
       <GChart
         type="PieChart"
-        :data="barChartCategories.chartData"
-        :options="barChartCategories.chartOptions"
+        :data="pieChartCategories.chartData"
+        :options="pieChartCategories.chartOptions"
       />
+      <GChart
+        type="ColumnChart"
+        :data="columnChartCategories.chartData"
+        :options="columnChartCategories.chartOptions"
+      />
+      <h2>Expense Values</h2>
       <GChart
         type="BarChart"
         :data="barChartCategoriesExpensesValues.chartData"
         :options="barChartCategoriesExpensesValues.chartOptions"
       />
+      <h2>Income Values</h2>
       <GChart
         type="BarChart"
         :data="barChartCategoriesIncomesValues.chartData"
@@ -88,7 +100,15 @@ export default {
           }
         }
       },
-      barChartCategories: {
+      pieChartCategories: {
+        chartData: [],
+        chartOptions: {
+          chart: {
+            title: "Company Performance"
+          }
+        }
+      },
+      columnChartCategories: {
         chartData: [],
         chartOptions: {
           chart: {
@@ -150,7 +170,7 @@ export default {
     },
     updateMovementEndBalanceLineChart(movements) {
       this.lineChartMovementEndBalance.chartData = [
-        ["Date", "EndBalance"],
+        ["Date", "Balance"],
         [movements[0].date, parseFloat(movements[0].end_balance)]
       ];
       var i;
@@ -161,13 +181,33 @@ export default {
         ]);
       }
     },
-    updateBarChartsCategories(movements) {
-      this.barChartCategories.chartData = [["Category", "Movements"]];
+    updatePieChartsCategories(movements) {
+      this.pieChartCategories.chartData = [["Category", "Movements"]];
       var i;
       for (i = 0; i < this.categories.length; i++) {
-        this.barChartCategories.chartData.push([
+        this.pieChartCategories.chartData.push([
           this.categories[i].name.toUpperCase(),
           this.countMovementsOfCategoryId(movements, this.categories[i].id)
+        ]);
+      }
+    },
+    updateColumnChartsCategories(movements) {
+      this.columnChartCategories.chartData = [
+        ["Category", "% of Movements", { role: "style" }],
+      ];
+      var i;
+      var cat,val;
+      var sortedArray = [];
+      for (i = 0; i < this.categories.length; i++) {
+        cat = this.categories[i].name.toUpperCase();
+        val = (this.countMovementsOfCategoryId(movements, this.categories[i].id) / movements.length) * 100;
+        val = Math.round(val * 100) / 100;
+        sortedArray.push({category: cat,value: val, color: this.getRandomColor()});
+      }
+      sortedArray.sort(this.compareCategoryValue);
+      for(i = 0; i < sortedArray.length; i++){
+        this.columnChartCategories.chartData.push([
+          sortedArray[i].category,sortedArray[i].value,sortedArray[i].color
         ]);
       }
     },
@@ -178,9 +218,7 @@ export default {
     updateBarChartsCategoriesExpensesValues(movements) {
       var expenses = this.movementsCategoriesSum.expenses;
       expenses.sort(this.compareCategoryValue);
-      this.barChartCategoriesExpensesValues.chartData = [
-        ["Expense", "Sum €"]
-        ];
+      this.barChartCategoriesExpensesValues.chartData = [["Expense", "Sum €"]];
       var i;
       for (i = 0; i < expenses.length; i++) {
         this.barChartCategoriesExpensesValues.chartData.push([
@@ -192,9 +230,7 @@ export default {
     updateBarChartsCategoriesIncomesValues(movements) {
       var incomes = this.movementsCategoriesSum.incomes;
       incomes.sort(this.compareCategoryValue);
-      this.barChartCategoriesIncomesValues.chartData = [
-        ["Income", "Sum €"]
-        ];
+      this.barChartCategoriesIncomesValues.chartData = [["Income", "Sum €"]];
       var i;
       for (i = 0; i < incomes.length; i++) {
         this.barChartCategoriesIncomesValues.chartData.push([
@@ -240,6 +276,14 @@ export default {
     },
     compareCategoryValue(a, b) {
       return a.value - b.value;
+    },
+    getRandomColor() {
+      var letters = "0123456789ABCDEF";
+      var color = "#";
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
     }
   },
   mounted() {
@@ -262,7 +306,8 @@ export default {
       this.updatePieChartIncomesAndExpenses(this.movements);
       this.updatePieChartTransfers(this.movements);
       this.updateMovementEndBalanceLineChart(this.movements);
-      this.updateBarChartsCategories(this.movements);
+      this.updatePieChartsCategories(this.movements);
+      this.updateColumnChartsCategories(this.movements);
       this.updateBarChartsCategoriesExpensesValues(this.movements);
       this.updateBarChartsCategoriesIncomesValues(this.movements);
     }

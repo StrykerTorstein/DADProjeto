@@ -70,6 +70,11 @@ export default {
         axios.get("api/user").then(response => {
           //Todo: Implement socket
           //this.$socket.emit('login',response.data.data);
+
+          if(response.data.active === 0){
+            this.$toasted.show("Youre not active on this platform any longer. Contact an admin.",{type: "error"});
+            return;
+          }
           this.$store.commit("setUser",response.data);
           
           if(response.data){

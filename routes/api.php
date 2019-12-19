@@ -27,6 +27,11 @@ Route::group(['middleware' => ['auth:api','operator']], function(){
     Route::post('movements/payment', 'MovementController@payment');
 });
 
+//Todo: Adicionar aqui o middleware do joão para proteger rotas do admin
+Route::middleware('auth:api')->get('users/all', 'UserControllerAPI@all');
+Route::middleware('auth:api')->get('movements/movementStatistics','MovementController@movementStatistics');
+
+
 Route::group(['middleware' => 'auth:api'], function(){
     Route::get('users/checkNewPassword','UserControllerAPI@checkNewPassword');
     Route::get('categories/all','CategoryController@all');
@@ -34,12 +39,13 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('wallets/allemails', 'WalletController@allEmails');
     Route::post('movements/expense/external','MovementController@expenseExternal');
     Route::post('movements/expense/transfer','MovementController@expenseTranfer');
+    Route::get('movements/getAllUserMovements','MovementController@getAllUserMovements');
+    Route::put('movements/updateMovementDescriptionAndCategory/{id}','MovementController@updateMovementDescriptionAndCategory');
 });
 
 Route::get('wallets/exists/{email}', 'WalletController@exists');
 
 Route::get('departments', 'DepartmentControllerAPI@index');
-Route::get('users', 'UserControllerAPI@index');
 Route::get('users/emailavailable', 'UserControllerAPI@emailAvailable');
 
 Route::get('users/getphotobyemail/{email}','UserControllerAPI@getPhotoByEmail');

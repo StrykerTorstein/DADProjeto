@@ -18,7 +18,11 @@
             <label for="movement_id">Type</label>
             <select class="form-control" v-model="selectedMovementType">
               <option value selected>ALL</option>
-              <option v-for="item in movementTypes" :value="item" :key="item">{{getTitleForType(item).toUpperCase()}}</option>
+              <option
+                v-for="item in movementTypes"
+                :value="item"
+                :key="item"
+              >{{getTitleForType(item).toUpperCase()}}</option>
             </select>
           </div>
         </div>
@@ -139,7 +143,7 @@
       </tbody>
     </table>
     <div>
-      <movement-details :movement="movement" v-if="movement"></movement-details>
+      <movement-details :movement="movement" v-if="movement" @edited-movement="onMovementEdited"></movement-details>
     </div>
     <div></div>
     <v-btn
@@ -170,7 +174,7 @@ export default {
       movements: [],
       meta: {},
       movement: undefined,
-      filter: {type:'i'},
+      filter: { type: "i" },
       movementTypes: {},
       movementTypesOfPayment: {
         c: "Cash",
@@ -206,14 +210,15 @@ export default {
       //console.log(params);
 
       axios
-        .get("api/" + this.$store.state.user.id + "/movements", { params: params })
+        .get("api/" + this.$store.state.user.id + "/movements", {
+          params: params
+        })
         .then(response => {
           this.movements = response.data.data;
           this.meta = response.data.meta;
         });
     },
     getNextPage: function() {
-      
       this.getMovements(this.meta.current_page + 1);
     },
     getPreviousPage: function() {
@@ -254,6 +259,14 @@ export default {
       if (type_payment == "mb") return "MB Payment";
 
       return type_payment;
+    },
+    onMovementEdited() {
+      this.$toasted.show("Movement Edited");
+      this.movement = null;
+      this.getMovements();
+      this.getBalance();
+      this.getCategories();
+      this.getTypes();
     }
   },
   components: {
@@ -302,16 +315,23 @@ export default {
       }
     }
   },
-  watch:{
-    filter(){
-      this.categoryList = this.allCategories.filter(category => category.type == this.filter.type)
+  watch: {
+    filter() {
+      this.categoryList = this.allCategories.filter(
+        category => category.type == this.filter.type
+      );
     },
-    selectedMovementType(){
-      if(!this.selectedMovementType || this.selectedMovementType.length === 0){
+    selectedMovementType() {
+      if (
+        !this.selectedMovementType ||
+        this.selectedMovementType.length === 0
+      ) {
         this.selectedMovementType = null;
       }
       this.filter.type = this.selectedMovementType;
-      this.categoryList = this.allCategories.filter( category => category.type == this.filter.type );
+      this.categoryList = this.allCategories.filter(
+        category => category.type == this.filter.type
+      );
       //filter.category = this.categoryList[1];
     }
   }

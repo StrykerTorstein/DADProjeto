@@ -3810,6 +3810,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["users"],
   data: function data() {
@@ -33110,6 +33111,22 @@ var render = function() {
                             "button",
                             {
                               staticClass: "btn btn-sm btn-primary",
+                              on: {
+                                click: function($event) {
+                                  return _vm.activate(user)
+                                }
+                              }
+                            },
+                            [_vm._v("Deactivate")]
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      user.active == 1 && user.wallet.balance > 0
+                        ? _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-sm btn-primary",
+                              attrs: { disabled: "" },
                               on: {
                                 click: function($event) {
                                   return _vm.activate(user)

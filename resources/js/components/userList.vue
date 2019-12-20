@@ -68,6 +68,7 @@
           <td v-if="user.type == 'u'">
             <button class="btn btn-sm btn-primary" v-if="user.active == 0" v-on:click="activate(user)">Activate</button>
             <button class="btn btn-sm btn-primary" v-if="user.active == 1 && user.wallet.balance == 0" v-on:click="activate(user)">Deactivate</button>
+            <button class="btn btn-sm btn-primary" v-if="user.active == 1 && user.wallet.balance > 0" v-on:click="activate(user)"  disabled>Deactivate</button>
           </td>
           <td v-else>
             {{isActive(user)}}

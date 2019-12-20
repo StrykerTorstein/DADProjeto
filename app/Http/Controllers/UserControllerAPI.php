@@ -10,30 +10,71 @@ use Illuminate\Support\Facades\DB;
 
 use App\User;
 use App\Wallet;
-use App\StoreUserRequest;
-use Hash;
+use Illuminate\Support\Facades\Auth;
+
+//use App\StoreUserRequest;
+//use Hash;
 
 class UserControllerAPI extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->has('page')) {
-            return UserResource::collection(User::paginate(5));
-        } else {
-            return UserResource::collection(User::all());
+        $user = User::select();
+        
+        //dd($request->name);
+        if($request->has("name")){
+            $user->where('name', '=', $request->name);
         }
-
-        /*Caso não se pretenda fazer uso de Eloquent API Resources (https://laravel.com/docs/5.5/eloquent-resources), é possível implementar com esta abordagem:
-        if ($request->has('page')) {
-            return User::with('department')->paginate(5);;
-        } else {
-            return User::with('department')->get();;
-        }*/
+        if($request->has("type")){
+            $user->where('type', '=', $request->type);
+        }
+        if($request->has("email")){
+            //$transfer_email = DB::table('wallets')->select('id')->where('email', $request->transfer_email)->get();
+            $user->where('email','=',$request->email);
+        }
+        if($request->has("active")){
+            //$transfer_email = DB::table('wallets')->select('id')->where('email', $request->transfer_email)->get();
+            $user->where('active','=',$request->active);
+        }
+        
+        return UserResource::collection($user->paginate(5));
     }
 
     public function show($id)
     {
         return new UserResource(User::find($id));
+    }
+
+    public function addUser(Request $request){
+        $request->validate([
+            'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
+            'email' => 'required|email|unique:users,email',
+            'type' => 'required|in:a,o',
+            'password' => 'min:3',
+        ]);
+        if($request->photo != null && $request->hasFile('photo')){
+            $request->validate(['photo' => 'file|image|mimes:jpeg,bmp,png,jpg']);
+        }
+
+        $user = new User();
+        $user->fill($request->all());
+        $user->active = 1;
+        //$user->remember_token = str_random(10);
+        //$user->password = Hash::make($user->password); //cannot use this: 'password' is not in the 'fillable'
+        $user->password = bcrypt($request->password);
+        //dd($user->photo);
+        if($request->photo != null && $request->hasFile('photo')){
+            //setPhoto($user,$request->photo);
+            $file = $request->photo;
+            $fileNew = \Storage::putFile('public/fotos', $file);
+            $filename = basename($fileNew);
+            $user->photo = $filename;
+        }else{
+            $user->photo = null;
+        }
+        $user->save();
+
+        return response()->json(new UserResource($user), 201);
     }
 
     public function store(Request $request)
@@ -135,8 +176,28 @@ class UserControllerAPI extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        $user->delete();
-        return response()->json(null, 204);
+
+        if($user->type != "u"){
+            $user->forceDelete();
+            \Storage::disk('public')->delete('fotos/'.$user->photo);
+
+            return response()->json(null, 204);
+        }
+        abort(403);
+        
+    }
+
+    public function activeOrInactive(User $user){
+        switch ($user->active) {
+            case 0:
+                $user->active = 1;
+                $user->save();
+                return response()->json(null, 200);   
+            case 1:
+                $user->active = 0;   
+                $user->save();
+                return response()->json(null, 200);   
+        };
     }
 
     public function emailAvailable(Request $request)

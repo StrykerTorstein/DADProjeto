@@ -213,7 +213,7 @@ export default {
           this.movements = response.data;
         });
     },
-    getBalance: function() {
+    getBalance(user) {
       axios
         .get("api/wallet/" + this.user.id + "/balance")
         .then(response => {

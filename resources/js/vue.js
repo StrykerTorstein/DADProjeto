@@ -24,6 +24,7 @@ Vue.use(Vuex);
 import VueRouter from 'vue-router';
 import Welcome from './components/welcome'
 import Users from './components/users';
+import UserAdd  from './components/userAdd';
 import TicTacToe from './components/game';
 import Dashboard from './components/dashboard';
 import Register from './components/register';
@@ -61,7 +62,8 @@ const routes = [
     {path:'/welcome',component:Welcome, name: "welcome"},
     {path:'/register',component:Register, name: "register"},
     {path:'/dashboard', component:Dashboard, name: "dashboard"},
-    {path:'/users',component:Users},
+    {path:'/users',component:Users, name: "showUsers"},
+    {path:'/users/add', component:UserAdd, name: "addUser"},
     {path:'/game',component:TicTacToe},
     {path:'/movements',component:Movement, name: "movements"},
     {path:'/chat', component: Chat, name: "chat"},

@@ -36,7 +36,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 Route::get('wallets/exists/{email}', 'WalletController@exists');
 
 Route::get('departments', 'DepartmentControllerAPI@index');
-Route::get('users', 'UserControllerAPI@index');
+
 Route::get('users/emailavailable', 'UserControllerAPI@emailAvailable');
 
 Route::get('users/getphotobyemail/{email}','UserControllerAPI@getPhotoByEmail');
@@ -44,7 +44,16 @@ Route::get('users/getphotobyemail/{email}','UserControllerAPI@getPhotoByEmail');
 Route::get('users/{id}', 'UserControllerAPI@show');
 Route::post('users', 'UserControllerAPI@store');
 Route::put('users/{id}', 'UserControllerAPI@update');
-Route::delete('users/{id}', 'UserControllerAPI@destroy');
+
+Route::group(['middleware' => ['auth:api','admin']], function(){
+    Route::get('users', 'UserControllerAPI@index');
+    Route::delete('users/{id}', 'UserControllerAPI@destroy');
+    Route::post('users/add', 'UserControllerAPI@addUser');
+    Route::put('users/{user}/active', 'UserControllerAPI@activeOrInactive');
+});
+
+
+
 //get porque vou buscar um número
 Route::get('wallets/count', 'WalletController@count');
 

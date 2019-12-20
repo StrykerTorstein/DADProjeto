@@ -3,6 +3,11 @@
     <v-btn class="btn btn-primary" v-on:click.prevent="editUser = true">Edit Profile</v-btn>
     <div v-if="editUser">
       <div>
+        <div>
+        Update Name
+        <input type="checkbox" v-model="updateName">
+        </div>
+        <div v-if="updateName">
         <label for="inputName">Name</label>
         <input
           type="text"
@@ -12,6 +17,12 @@
           id="inputName"
           placeholder="Firstname Lastname"
         />
+        </div>
+        <div>
+        Update Password
+        <input type="checkbox" v-model="updatePassword">
+        </div>
+        <div v-if="updatePassword">
         <label for="inputPassword">Password</label>
         <input
           type="password"
@@ -28,7 +39,13 @@
           name="passwordCheck"
           id="inputPasswordCheck"
         />
+        </div>
         <div v-if="this.$store.state.user.type == 'u'">
+        <div>
+        Update NIF
+        <input type="checkbox" v-model="updateNif">
+        </div>
+          <div v-if="updateNif">
           <label for="inputNif">NIF</label>
           <input
             type="number"
@@ -39,8 +56,13 @@
             min="100000000"
             max="999999999"
           />
+          </div>
         </div>
-        <div class="file-upload-form">
+        <div>
+        Update Photo
+        <input type="checkbox" v-model="updatePhoto">
+        </div>
+        <div class="file-upload-form" v-if="updatePhoto">
           Upload an image file:
           <input type="file" @change="previewImage" accept="image/*" />
           <div>
@@ -55,7 +77,7 @@
           </div>
         </div>
       </div>
-      <v-btn class="btn btn-success" v-on:click.prevent="saveUserEdits()">Save and Logout</v-btn>
+      <v-btn v-if="updateAnything" class="btn btn-success" v-on:click.prevent="saveUserEdits()">Save and Logout</v-btn>
       <v-btn class="btn btn-danger" v-on:click.prevent="editUser = false">Cancel</v-btn>
     </div>
   </div>
@@ -74,7 +96,11 @@ export default {
       showAlertPasswordMustBeDifferent: false,
       newPhotoImage: null,
       newPhotoFile: null,
-      newNif: null
+      newNif: null,
+      updateName: false,
+      updatePassword: false,
+      updateNif: false,
+      updatePhoto: false
     };
   },
   watch: {
@@ -87,26 +113,30 @@ export default {
   },
   methods: {
     saveUserEdits() {
-      if (!this.newPassword || this.newPassword.length < 3) {
-        this.$toasted.show("Password must be larger than 3 characters!", {
-          type: "error"
-        });
-        return;
+      if(this.updatePassword){
+        if (!this.newPassword || this.newPassword.length < 3) {
+          this.$toasted.show("Password must be larger than 3 characters!", {
+            type: "error"
+          });
+          return;
+        }
+        if (this.newPassword.localeCompare(this.newPasswordCheck) != 0) {
+          this.$toasted.show("Please type the correct password twice!", {
+            type: "error"
+          });
+          return;
+        }
       }
-      if (this.newPassword.localeCompare(this.newPasswordCheck) != 0) {
-        this.$toasted.show("Please type the correct password twice!", {
-          type: "error"
-        });
-        return;
+      if(this.updateName){
+        var nameValid = this.validateName(this.newName);
+        if (!nameValid) {
+          this.$toasted.show("Invalid Name", {
+            type: "error"
+          });
+          return;
+        }
       }
-      var nameValid = this.validateName(this.newName);
-      if (!nameValid) {
-        this.$toasted.show("Invalid Name", {
-          type: "error"
-        });
-        return;
-      }
-      if (this.$store.state.user.type == "u") {
+      if (this.$store.state.user.type == "u" && this.updateNif) {
         var nifvalid =
           this.newNif !== null &&
           (this.newNif >= 100000000 && this.newNif <= 999999999);
@@ -126,7 +156,7 @@ export default {
         })
         .then(response => {
           var passwordEqualToLastPassword = response.data;
-          if (passwordEqualToLastPassword) {
+          if (this.updatePassword && passwordEqualToLastPassword) {
             this.$toasted.show(
               "Password must be different than last password.",
               { type: "error" }
@@ -134,12 +164,16 @@ export default {
           } else {
             let formData = new FormData();
             formData.append("_method", "PUT");
-            if (this.newPhotoFile) {
+            if (this.newPhotoFile && this.updatePhoto) {
               formData.append("photo", this.newPhotoFile);
             }
-            formData.set("name", this.newName);
-            formData.set("password", this.newPassword);
-            if (this.$store.state.user.type == "u") {
+            if(this.updateName){
+              formData.set("name", this.newName);
+            }
+            if(this.updatePassword){
+              formData.set("password", this.newPassword);
+            }
+            if (this.$store.state.user.type == "u" && this.updateNif) {
               formData.set("nif", this.newNif);
             }
             //Axios.post although the formdata sets its as a PUT (apped)
@@ -201,6 +235,11 @@ export default {
           this.showMessage = true;
           console.log(error);
         });
+    }
+  },
+  computed:{
+    updateAnything(){
+      return this.updateName || this.updatePassword || this.updatePhoto || (this.$store.state.user.type == 'u' && this.updateNif);
     }
   }
 };

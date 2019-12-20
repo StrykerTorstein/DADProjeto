@@ -87,11 +87,15 @@ class UserControllerAPI extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-                'name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/',
-                'password' => 'min:3',
-                'nif' => 'min:9'
-            ]);
+        if($request->has('name')){
+            $request->validate(['name' => 'required|min:3|regex:/^[A-Za-záàâãéèêíóôõúçÁÀÂÃÉÈÍÓÔÕÚÇ ]+$/']); 
+        }
+        if($request->has('password')){
+            $request->validate(['password' => 'min:3']); 
+        }
+        if($request->has('nif')){
+            $request->validate(['nif' => 'min:9']);
+        }
         $user = User::findOrFail($id);
         
         if($request->photo != null && $request->hasFile('photo')){
@@ -117,13 +121,16 @@ class UserControllerAPI extends Controller
             }
             $request->photo = null;
         }
-        if($user->type == 'u'){
+        if($user->type == 'u' && $request->has('nif')){
             $user->nif = $request->nif;
         }
-        $user->name = $request->name;
-        $user->password = bcrypt($request->password);
+        if($request->has('name')){
+            $user->name = $request->name;
+        }
+        if($request->has('password')){
+            $user->password = bcrypt($request->password);
+        }
         $user->update();
-
 
         return new UserResource($user);
     }

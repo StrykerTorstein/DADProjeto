@@ -7,9 +7,10 @@
     <router-link to="/">Welcome</router-link>
     <router-link v-show="!this.$store.state.user" to="/login">Login</router-link>
     <router-link v-show="this.$store.state.user" to="/dashboard">Dashboard</router-link>
-    <router-link v-show="this.$store.state.user" to="/movements">Movements</router-link>
+    <router-link v-show="this.$store.state.user && this.$store.state.user.type == 'u'" to="/movements">Movements</router-link>
     <router-link v-show="this.$store.state.user && this.$store.state.user.type == 'u'" to="/movementStatistics">Statistics</router-link>
     <router-link v-show="this.$store.state.user && this.$store.state.user.type == 'a'" to="/adminStatistics">Analytics</router-link>
+    <router-link v-show="this.$store.state.user && this.$store.state.user.type == 'a'" to="/users">Users</router-link>
     <!--<router-link to="/game">Tic Tac Toe</router-link>-->
     <router-link to="/chat">Chat</router-link>
     <router-link v-show="this.$store.state.user" to="/logout">Logout</router-link>

@@ -27,9 +27,9 @@ Route::group(['middleware' => ['auth:api','operator']], function(){
     Route::post('movements/payment', 'MovementController@payment');
 });
 
-//Todo: Adicionar aqui o middleware do joão para proteger rotas do admin
-Route::middleware('auth:api')->get('users/all', 'UserControllerAPI@all');
-Route::middleware('auth:api')->get('movements/movementStatistics','MovementController@movementStatistics');
+
+Route::middleware(['auth:api','admin'])->get('users/all', 'UserControllerAPI@all');
+Route::middleware(['auth:api','admin'])->get('movements/movementStatistics','MovementController@movementStatistics');
 
 
 Route::group(['middleware' => 'auth:api'], function(){

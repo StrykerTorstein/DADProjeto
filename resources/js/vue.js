@@ -73,9 +73,9 @@ const routes = [
     { path: '/chat', component: Chat, name: "chat" },
     { path: '/adminStatistics', component: AdminStatistics, name: "adminStatistics" },
     { path: '/login', component: Login, name: "login" },
-    { path: '/logout', component: Logout, name: "logout" }
-    {path:'/users/add', component:UserAdd, name: "addUser"},
-    {path:'/users',component:Users, name: "showUsers"},
+    { path: '/logout', component: Logout, name: "logout" },
+    { path:'/users/add', component:UserAdd, name: "addUser"},
+    { path:'/users',component:Users, name: "showUsers"},
 ]
 
 const router = new VueRouter({

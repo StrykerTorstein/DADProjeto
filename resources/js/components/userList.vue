@@ -8,7 +8,7 @@
           <div class="form-group">
             <label for="user_id">Type of User</label>
             <select name="type" class="form-control" v-model="filter.type">
-              <option value selected>-- Type Of User --</option>
+              <option value selected>All</option>
               <option
                 v-for="(item, key) in userTypes"
                 v-bind:key="key"
@@ -33,7 +33,7 @@
           <div class="form-group">
             <label for="user_id">Status</label>
             <select name="active" class="form-control" v-model="filter.active">
-              <option value selected>-- Status --</option>
+              <option value selected>Any</option>
               <option
                 v-for="(item, key) in userActive"
                 v-bind:key="key"
@@ -100,11 +100,12 @@
 
 <script>
 export default {
-  props: ["users"],
+  //props: ["users"],
   data: () => {
     return {
       currentUser: null,
       filter: {},
+      users: null,
       userTypes: {
         a: "Administrator",
         o: "Operator",
@@ -125,6 +126,7 @@ export default {
         axios
         .put("api/users/" + user.id + "/active", user)
         .then(response => {
+          this.getUsers();
         });
     },
     editUser(user) {

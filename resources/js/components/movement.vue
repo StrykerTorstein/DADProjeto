@@ -273,6 +273,9 @@ export default {
     "movement-details": movementDetails
   },
   mounted() {
+    if(this.$store.state.user && this.$store.state.user.type != 'u'){
+      this.$router.push({ path: "/welcome" });
+    }
     this.getMovements();
     this.getBalance();
     this.getCategories();

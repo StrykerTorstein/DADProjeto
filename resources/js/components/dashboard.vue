@@ -3,19 +3,19 @@
     <div class="jumbotron">
       <h1>{{ title }}</h1>
     </div>
+    <!-- Deprecated, added to links
     <div v-if="this.$store.state.user.type == 'a'">
         <button class="btn btn-sm btn-primary"  v-on:click.prevent="goToUsersPager()">Manage Users</button>
     </div>
+    -->
     <br>
     <div>
       <v-img v-if="photo" height="256px" width="256px" :src="photo"></v-img>
     </div>
     <div v-if="this.$store.state.user.type == 'u'">
-      <!-- place operator component here -->
       <user-register-expense/>
     </div>
     <div v-if="this.$store.state.user.type == 'o'">
-      <!-- place operator component here -->
       <operator-movement />
     </div>
     <user-edit />

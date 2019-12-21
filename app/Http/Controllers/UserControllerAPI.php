@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 use App\User;
 use App\Wallet;
-use Illuminate\Support\Facades\Auth;
 
 //use App\StoreUserRequest;
 //use Hash;
@@ -21,10 +20,9 @@ class UserControllerAPI extends Controller
     public function index(Request $request)
     {
         $user = User::select();
-        
         //dd($request->name);
         if($request->has("name")){
-            $user->where('name', '=', $request->name);
+            $user->where('name', 'like', '%'.$request->name.'%');
         }
         if($request->has("type")){
             $user->where('type', '=', $request->type);
@@ -200,11 +198,11 @@ class UserControllerAPI extends Controller
             case 0:
                 $user->active = 1;
                 $user->save();
-                return response()->json(null, 200);   
+                return response()->json($user, 200);   
             case 1:
                 $user->active = 0;   
                 $user->save();
-                return response()->json(null, 200);   
+                return response()->json($user, 200);   
         };
     }
 

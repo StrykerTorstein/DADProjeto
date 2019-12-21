@@ -27,6 +27,7 @@ Vue.use(VueGoogleCharts);
 import VueRouter from 'vue-router';
 import Welcome from './components/welcome'
 import Users from './components/users';
+import UserAdd  from './components/userAdd';
 import TicTacToe from './components/game';
 import Dashboard from './components/dashboard';
 import Register from './components/register';
@@ -66,7 +67,6 @@ const routes = [
     { path: '/welcome', component: Welcome, name: "welcome" },
     { path: '/register', component: Register, name: "register" },
     { path: '/dashboard', component: Dashboard, name: "dashboard" },
-    { path: '/users', component: Users },
     { path: '/game', component: TicTacToe },
     { path: '/movements', component: Movement, name: "movements" },
     { path: '/movementStatistics', component: MovementStatistics, name: "movementStatistics" },
@@ -74,6 +74,8 @@ const routes = [
     { path: '/adminStatistics', component: AdminStatistics, name: "adminStatistics" },
     { path: '/login', component: Login, name: "login" },
     { path: '/logout', component: Logout, name: "logout" }
+    {path:'/users/add', component:UserAdd, name: "addUser"},
+    {path:'/users',component:Users, name: "showUsers"},
 ]
 
 const router = new VueRouter({

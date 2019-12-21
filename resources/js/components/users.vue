@@ -32,7 +32,7 @@ import movementDetailsVue from './movementDetails.vue';
 export default {
   data: () => {
     return {
-      title: "Virtual Wallet",
+      title: "Users",
       editingUser: false,
       showSuccess: false,
       showFailure: false,
@@ -50,11 +50,15 @@ export default {
     },
 
     deleteUser: function(user) {
-      axios.delete("api/users/" + user.id).then(response => {
-        this.showSuccess = true;
-        this.successMessage = "User Deleted";
-        this.getUsers();
-      });
+      if(this.$store.state.user.id != user.id){
+        axios.delete("api/users/" + user.id).then(response => {
+          this.showSuccess = true;
+          this.successMessage = "User Deleted";
+          this.getUsers();
+        });
+      }else{
+        this.failMessage = "Ola";
+      }
     },
     saveUser: function(user) {
       this.editingUser = false;
@@ -71,6 +75,7 @@ export default {
           this.editingUser = false;
         });
     },
+
     cancelEdit: function() {
       this.showSuccess = false;
       this.editingUser = false;

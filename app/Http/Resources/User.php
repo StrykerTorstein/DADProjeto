@@ -17,9 +17,12 @@ class User extends Resource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email,
+            'type' => $this->type,
+            'active' => $this->active,
             'photo' => $this->photo,
-            'nif' => $this->nif
+            'nif' => $this->nif,
+            'email' => $this->email,
+            'wallet' => $this->wallet,
         ];
     }
 }

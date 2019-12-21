@@ -10,7 +10,7 @@
         name="name"
         id="inputName"
         placeholder="Fullname"
-        value
+        value readonly
       />
     </div>
     <div class="form-group">
@@ -22,39 +22,29 @@
         name="email"
         id="inputEmail"
         placeholder="Email address"
-        value
+        value readonly
       />
     </div>
     <div class="form-group">
-      <label for="inputAge">Age</label>
-      <input
-        type="number"
-        class="form-control"
-        v-model="currentUser.age"
-        name="age"
-        id="inputAge"
-        placeholder="Age"
-        value
-      />
+      <label for="inputType">User type</label>
+        <select
+          class="form-control m-bot15"
+          name="userType"
+          v-model="currentUser.type"
+        >
+          <option v-for="(item, key) in userTypes" v-bind:key="key" :value="key">{{item}}</option>
+        </select>
     </div>
-    <!--
     <div class="form-group">
-      <label for="department_id">Department:</label>
-      <select
-        class="form-control"
-        id="department_id"
-        name="department_id"
-        v-model="currentUser.department_id"
-      >
-        <option
-          v-for="department in departments"
-          :key="department.id"
-          v-bind:value="department.id"
-        >{{ department.name }}</option>
-      </select>
+      <label for="inputState">State</label>
+        <select
+          class="form-control m-bot15"
+          name="userState"
+          v-model="currentUser.active"
+        >
+          <option v-for="(item, key) in userActive" v-bind:key="key" :value="key">{{item}}</option>
+        </select>
     </div>
-    -->
-
     <div class="form-group">
       <a class="btn btn-primary" v-on:click.prevent="saveUser()">Save</a>
       <a class="btn btn-light" v-on:click.prevent="cancelEdit()">Cancel</a>
@@ -67,7 +57,15 @@ export default {
   props:['currentUser'],
   data: () => {
     return {
-      //departments:[]
+      userTypes: {
+        a: "Administrator",
+        o: "Operator",
+        u: "User"
+      },
+      userActive: {
+        1: "Active",
+        0: "Inactive",
+      },
     };
   },
   methods: {

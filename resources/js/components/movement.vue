@@ -297,6 +297,7 @@ export default {
   sockets: {
     movementReceived(dataFromServer) {
       //console.log("Movement received!");
+      this.filter = {};
       this.getMovements();
       this.getBalance();
       //let name = dataFromServer[1] === null ? 'Unknown' : dataFromServer[1].name;

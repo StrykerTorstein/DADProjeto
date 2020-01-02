@@ -145,7 +145,7 @@ class MovementController extends Controller
         $wallet = Wallet::findOrFail($request->wallet_id);
         $user = User::whereEmail($wallet->email)->first();
         $start_balance = $wallet->balance;
-        $end_balance = $start_balance - $movement->value;
+        $end_balance = $start_balance + $movement->value;
         $movement->start_balance = $start_balance;
         $movement->end_balance = $end_balance;
         $wallet->balance = $movement->end_balance;

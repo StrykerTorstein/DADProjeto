@@ -25,7 +25,7 @@
         "vue-socket.io": "^3.0.7",
         "vue-template-compiler": "^2.6.10",
         "vue-toasted": "^1.1.27",
-        "vuetify": "^2.1.13"
+        "vuetify": "^2.6.10"
     },
     "dependencies": {
         "chart.js": "^2.9.3",
